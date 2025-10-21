@@ -30,23 +30,22 @@
             <Button x:Name="btnForward" Content=">" Click="btnForward_Click"/>
         </StackPanel>
 
-        <Border BorderBrush="Black" BorderThickness="1" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="5">
+        <Border BorderBrush="Black" BorderThickness="1" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="5">
         <ScrollViewer>
                 
             <Grid x:Name="gridAgenda">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width=".3*"/>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                    <ListBox x:Name="lb1" Grid.Column="1" DataContext="{Binding}" MouseDoubleClick="SelectionChanged"/>
-                    <ListBox x:Name="lb2" Grid.Column="2" DataContext="{Binding}" MouseDoubleClick="SelectionChanged"/>
-                    <ListBox x:Name="lb3" Grid.Column="3" DataContext="{Binding}" MouseDoubleClick="SelectionChanged"/>
-                    <ListBox x:Name="lb4" Grid.Column="4" DataContext="{Binding}" MouseDoubleClick="SelectionChanged"/>
-                    <ListBox x:Name="lb5" Grid.Column="5" DataContext="{Binding}" MouseDoubleClick="SelectionChanged"/>
+                    <ListBox x:Name="lb1" Grid.Column="0" DataContext="{Binding}" MouseDoubleClick="SelectionChanged"/>
+                    <ListBox x:Name="lb2" Grid.Column="1" DataContext="{Binding}" MouseDoubleClick="SelectionChanged"/>
+                    <ListBox x:Name="lb3" Grid.Column="2" DataContext="{Binding}" MouseDoubleClick="SelectionChanged"/>
+                    <ListBox x:Name="lb4" Grid.Column="3" DataContext="{Binding}" MouseDoubleClick="SelectionChanged"/>
+                    <ListBox x:Name="lb5" Grid.Column="4" DataContext="{Binding}" MouseDoubleClick="SelectionChanged"/>
                 </Grid>
             </ScrollViewer>
         </Border>
