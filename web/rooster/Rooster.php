@@ -31,10 +31,10 @@ $rooster_data = [];
 
 /** @var TYPE_NAME $conn */
 $stmt = $conn->prepare("
-    SELECT schedule_date, subject, teacher, room, time 
+    SELECT schedule_date, subject, teacher, room, begin_time, end_time 
     FROM schedule 
     WHERE klas = ? AND schedule_date BETWEEN ? AND ? 
-    ORDER BY schedule_date, time
+    ORDER BY schedule_date, begin_time, end_time
 ");
 $stmt->bind_param("sss", $user_klas, $monday_sql_date, $friday_sql_date);
 $stmt->execute();
@@ -78,7 +78,20 @@ $conn->close();
                         <div class="subject"><?php echo htmlspecialchars($item['subject']); ?></div>
                         <div class="teacher"><?php echo htmlspecialchars($item['teacher']); ?></div>
                         <div class="room"><?php echo htmlspecialchars($item['room']); ?></div>
-                        <div class="time"><?php echo htmlspecialchars($item['time']); ?></div>
+                        <div class="time-range">
+                            <span class="begin_time">
+                                <?php
+                                    $bt = $item['begin_time'];
+                                    echo htmlspecialchars(substr($bt, 0, 2) . ':' . substr($bt, 2));
+                                ?>
+                            </span>
+                            <span class="end_time">
+                                <?php
+                                    $et = $item['end_time'];
+                                    echo htmlspecialchars(substr($et, 0, 2) . ':' . substr($et, 2));
+                                ?>
+                            </span>
+                        </div>
                     </li>
                 <?php endforeach; ?>
             <?php endif; ?>
@@ -96,7 +109,20 @@ $conn->close();
                         <div class="subject"><?php echo htmlspecialchars($item['subject']); ?></div>
                         <div class="teacher"><?php echo htmlspecialchars($item['teacher']); ?></div>
                         <div class="room"><?php echo htmlspecialchars($item['room']); ?></div>
-                        <div class="time"><?php echo htmlspecialchars($item['time']); ?></div>
+                        <div class="time-range">
+                            <span class="begin_time">
+                                <?php
+                                    $bt = $item['begin_time'];
+                                    echo htmlspecialchars(substr($bt, 0, 2) . ':' . substr($bt, 2));
+                                ?>
+                            </span>
+                            <span class="end_time">
+                                <?php
+                                    $et = $item['end_time'];
+                                    echo htmlspecialchars(substr($et, 0, 2) . ':' . substr($et, 2));
+                                ?>
+                            </span>
+                        </div>
                     </li>
                 <?php endforeach; ?>
             <?php endif; ?>
@@ -114,7 +140,20 @@ $conn->close();
                         <div class="subject"><?php echo htmlspecialchars($item['subject']); ?></div>
                         <div class="teacher"><?php echo htmlspecialchars($item['teacher']); ?></div>
                         <div class="room"><?php echo htmlspecialchars($item['room']); ?></div>
-                        <div class="time"><?php echo htmlspecialchars($item['time']); ?></div>
+                        <div class="time-range">
+                            <span class="begin_time">
+                                <?php
+                                    $bt = $item['begin_time'];
+                                    echo htmlspecialchars(substr($bt, 0, 2) . ':' . substr($bt, 2));
+                                ?>
+                            </span>
+                            <span class="end_time">
+                                <?php
+                                    $et = $item['end_time'];
+                                    echo htmlspecialchars(substr($et, 0, 2) . ':' . substr($et, 2));
+                                ?>
+                            </span>
+                        </div>
                     </li>
                 <?php endforeach; ?>
             <?php endif; ?>
@@ -132,7 +171,20 @@ $conn->close();
                         <div class="subject"><?php echo htmlspecialchars($item['subject']); ?></div>
                         <div class="teacher"><?php echo htmlspecialchars($item['teacher']); ?></div>
                         <div class="room"><?php echo htmlspecialchars($item['room']); ?></div>
-                        <div class="time"><?php echo htmlspecialchars($item['time']); ?></div>
+                        <div class="time-range">
+                            <span class="begin_time">
+                                <?php
+                                    $bt = $item['begin_time'];
+                                    echo htmlspecialchars(substr($bt, 0, 2) . ':' . substr($bt, 2));
+                                ?>
+                            </span>
+                            <span class="end_time">
+                                <?php
+                                    $et = $item['end_time'];
+                                    echo htmlspecialchars(substr($et, 0, 2) . ':' . substr($et, 2));
+                                ?>
+                            </span>
+                        </div>
                     </li>
                 <?php endforeach; ?>
             <?php endif; ?>
@@ -150,7 +202,20 @@ $conn->close();
                         <div class="subject"><?php echo htmlspecialchars($item['subject']); ?></div>
                         <div class="teacher"><?php echo htmlspecialchars($item['teacher']); ?></div>
                         <div class="room"><?php echo htmlspecialchars($item['room']); ?></div>
-                        <div class="time"><?php echo htmlspecialchars($item['time']); ?></div>
+                        <div class="time-range">
+                            <span class="begin_time">
+                                <?php
+                                    $bt = $item['begin_time'];
+                                    echo htmlspecialchars(substr($bt, 0, 2) . ':' . substr($bt, 2));
+                                ?>
+                            </span>
+                            <span class="end_time">
+                                <?php
+                                    $et = $item['end_time'];
+                                    echo htmlspecialchars(substr($et, 0, 2) . ':' . substr($et, 2));
+                                ?>
+                            </span>
+                        </div>
                     </li>
                 <?php endforeach; ?>
             <?php endif; ?>
