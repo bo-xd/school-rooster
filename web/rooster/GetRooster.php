@@ -14,7 +14,7 @@ $user_klas = $_SESSION['klas'];
 $rooster_data = [ 1 => [], 2 => [], 3 => [], 4 => [], 5 => [] ];
 
 /** @var TYPE_NAME $conn */
-$stmt = $conn->prepare("SELECT day_of_week, subject, teacher, room, time FROM schedule WHERE klas = ? ORDER BY time");
+$stmt = $conn->prepare("SELECT day_of_week, subject, teacher, room, begin_time, end_time FROM schedule WHERE klas = ? ORDER BY time");
 $stmt->bind_param("s", $user_klas);
 $stmt->execute();
 $result = $stmt->get_result();
