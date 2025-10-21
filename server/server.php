@@ -12,11 +12,14 @@ if ($conn->query($createDbSql) === FALSE) {
 
 $conn->select_db($dbname);
 
-$createTableSql = "CREATE TABLE IF NOT EXISTS users (
+$createTableSql = "CREATE TABLE IF NOT EXISTS schedule (
     id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(30) NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    klas VARCHAR(5) NOT NULL
+    klas VARCHAR(10) NOT NULL,
+    day_of_week INT(1) NOT NULL,
+    subject VARCHAR(100) NOT NULL,
+    teacher VARCHAR(10) NOT NULL,
+    room VARCHAR(10) NOT NULL,
+    time VARCHAR(10) NOT NULL
 )";
 
 if ($conn->query($createTableSql) === FALSE) {
@@ -26,6 +29,4 @@ if ($conn->query($createTableSql) === FALSE) {
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-
-echo("Connected successfully");
 ?>
