@@ -18,6 +18,7 @@ $createTableSql = "CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(255) NOT NULL,
     klas VARCHAR(5) NOT NULL
 )";
+
 if ($conn->query($createTableSql) === FALSE) {
     die("Error creating table: " . $conn->error);
 }

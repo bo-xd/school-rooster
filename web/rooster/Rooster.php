@@ -16,19 +16,26 @@
     $thursday = date("n/j/y", strtotime('thursday this week'));
     $friday = date("n/j/y", strtotime('friday this week'));
 ?>
+    <header class="navbar">
+        <form action="../auth/login.html">
+            <input type="submit" value="Logout" class="logout"/>
+        </form>
+    </header>
     <div class="Agenda">
         <div class="Maandag">
             <h4 class="DateMaandag"><?php echo $monday; ?><br>Maandag</h4>
             <ul class="TasksMaandag">
                 <li class="schedule-item">
                     <div class="subject">Styling en positionering</div>
-                    <div class="room">DAKL</div>
-                    <div class="time">2.04</div>
+                    <div class="teacher">DAKL</div>
+                    <div class="room">2.04</div>
+                    <div class="time">12:30</div>
                 </li>
                 <li class="schedule-item">
                     <div class="subject">Nederlands</div>
-                    <div class="room">DKSJ</div>
-                    <div class="time">2.20</div>
+                    <div class="teacher">DKSJ</div>
+                    <div class="room">2.20</div>
+                    <div class="time">12:30</div>
                 </li>
             </ul>
         </div>
@@ -37,13 +44,15 @@
             <ul class="TasksDinsdag">
                 <li class="schedule-item">
                     <div class="subject">Styling en positionering</div>
-                    <div class="room">DAKL</div>
-                    <div class="time">2.04</div>
+                    <div class="teacher">DAKL</div>
+                    <div class="room">2.04</div>
+                    <div class="time">12:30</div>
                 </li>
                 <li class="schedule-item">
                     <div class="subject">Nederlands</div>
-                    <div class="room">DKSJ</div>
-                    <div class="time">2.20</div>
+                    <div class="teacher">DKSJ</div>
+                    <div class="room">2.20</div>
+                    <div class="time">12:30</div>
                 </li>
             </ul>
         </div>
@@ -52,18 +61,21 @@
             <ul class="TasksWoensdag">
                 <li class="schedule-item">
                     <div class="subject">Styling en positionering</div>
-                    <div class="room">DAKL</div>
-                    <div class="time">2.04</div>
+                    <div class="teacher">DAKL</div>
+                    <div class="room">2.04</div>
+                    <div class="time">12:30</div>
                 </li>
                 <li class="schedule-item">
                     <div class="subject">Nederlands</div>
-                    <div class="room">DKSJ</div>
-                    <div class="time">2.20</div>
+                    <div class="teacher">DKSJ</div>
+                    <div class="room">2.20</div>
+                    <div class="time">12:30</div>
                 </li>
                 <li class="schedule-item">
                     <div class="subject">Styling en positionering</div>
-                    <div class="room">DAKL</div>
-                    <div class="time">2.04</div>
+                    <div class="teacher">DAKL</div>
+                    <div class="room">2.04</div>
+                    <div class="time">12:30</div>
                 </li>
             </ul>
         </div>
@@ -72,13 +84,15 @@
             <ul class="TasksDonderdag">
                 <li class="schedule-item">
                     <div class="subject">Styling en positionering</div>
-                    <div class="room">DAKL</div>
-                    <div class="time">2.04</div>
+                    <div class="teacher">DAKL</div>
+                    <div class="room">2.04</div>
+                    <div class="time">12:30</div>
                 </li>
                 <li class="schedule-item">
                     <div class="subject">Nederlands</div>
-                    <div class="room">DKSJ</div>
-                    <div class="time">2.20</div>
+                    <div class="teacher">DKSJ</div>
+                    <div class="room">2.20</div>
+                    <div class="time">12:30</div>
                 </li>
             </ul>
         </div>
@@ -87,13 +101,15 @@
             <ul class="TasksVrijdag">
                 <li class="schedule-item">
                     <div class="subject">Nederlands</div>
-                    <div class="room">DKSJ</div>
-                    <div class="time">2.20</div>
+                    <div class="teacher">DKSJ</div>
+                    <div class="room">2.20</div>
+                    <div class="time">12:30</div>
                 </li>
                 <li class="schedule-item">
                     <div class="subject">Styling en positionering</div>
-                    <div class="room">DAKL</div>
-                    <div class="time">2.04</div>
+                    <div class="teacher">DAKL</div>
+                    <div class="room">2.04</div>
+                    <div class="time">12:30</div>
                 </li>
             </ul>
         </div>

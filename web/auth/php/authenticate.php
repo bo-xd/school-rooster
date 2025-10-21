@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($row = $result->fetch_assoc()) {
         if (password_verify($password, $row['password'])) {
-            header("Location: ../../Rooster.php");
+            header("Location: ../../rooster/Rooster.php");
             exit;
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Invalid username or password.']);
