@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfRoosterMaker"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Roostermaker Programma" Height="450" Width="800">
     <Window.Resources>
         <ResourceDictionary Source="Assets/Style/Style.xaml"/>
     </Window.Resources>
@@ -32,6 +32,7 @@
 
         <Border BorderBrush="Black" BorderThickness="1" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="5">
         <ScrollViewer>
+                
             <Grid x:Name="gridAgenda">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width=".3*"/>
@@ -41,8 +42,13 @@
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-            </Grid>
-        </ScrollViewer>
+                    <ListBox x:Name="lb1" Grid.Column="1" DataContext="{Binding}"/>
+                    <ListBox x:Name="lb2" Grid.Column="2" DataContext="{Binding}"/>
+                    <ListBox x:Name="lb3" Grid.Column="3" DataContext="{Binding}"/>
+                    <ListBox x:Name="lb4" Grid.Column="4" DataContext="{Binding}"/>
+                    <ListBox x:Name="lb5" Grid.Column="5" DataContext="{Binding}"/>
+                </Grid>
+            </ScrollViewer>
         </Border>
     
         <Button x:Name="btnCreate" Content="Create" Grid.Row="2" Grid.Column="4" VerticalAlignment="Center" Click="btnCreate_Click"/>
