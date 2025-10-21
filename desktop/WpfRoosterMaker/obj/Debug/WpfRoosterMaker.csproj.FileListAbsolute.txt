@@ -22,3 +22,5 @@ C:\Users\timot\OneDrive\Documenten\GitHub\school-rooster\desktop\WpfRoosterMaker
 C:\Users\timot\OneDrive\Documenten\GitHub\school-rooster\desktop\WpfRoosterMaker\bin\Debug\System.Buffers.dll
 C:\Users\timot\OneDrive\Documenten\GitHub\school-rooster\desktop\WpfRoosterMaker\bin\Debug\MySql.Data.xml
 C:\Users\timot\OneDrive\Documenten\GitHub\school-rooster\desktop\WpfRoosterMaker\obj\Debug\WpfRoosterMaker.csproj.CopyComplete
+C:\Users\timot\OneDrive\Documenten\GitHub\school-rooster\desktop\WpfRoosterMaker\obj\Debug\Update.g.cs
+C:\Users\timot\OneDrive\Documenten\GitHub\school-rooster\desktop\WpfRoosterMaker\obj\Debug\Update.baml
