@@ -23,7 +23,7 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <ComboBox x:Name="cbKlas" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <ComboBox x:Name="cbKlas" VerticalAlignment="Center" HorizontalAlignment="Center" SelectionChanged="cbKlas_SelectionChanged"/>
         <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Button x:Name="btnBackward" Content="&lt;" Click="btnBackward_Click"/>
             <DatePicker x:Name="dpWeek" SelectedDateChanged="dpWeek_SelectedDateChanged"/>
@@ -42,11 +42,11 @@
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                    <ListBox x:Name="lb1" Grid.Column="1" DataContext="{Binding}"/>
-                    <ListBox x:Name="lb2" Grid.Column="2" DataContext="{Binding}"/>
-                    <ListBox x:Name="lb3" Grid.Column="3" DataContext="{Binding}"/>
-                    <ListBox x:Name="lb4" Grid.Column="4" DataContext="{Binding}"/>
-                    <ListBox x:Name="lb5" Grid.Column="5" DataContext="{Binding}"/>
+                    <ListBox x:Name="lb1" Grid.Column="1" DataContext="{Binding}" MouseDoubleClick="SelectionChanged"/>
+                    <ListBox x:Name="lb2" Grid.Column="2" DataContext="{Binding}" MouseDoubleClick="SelectionChanged"/>
+                    <ListBox x:Name="lb3" Grid.Column="3" DataContext="{Binding}" MouseDoubleClick="SelectionChanged"/>
+                    <ListBox x:Name="lb4" Grid.Column="4" DataContext="{Binding}" MouseDoubleClick="SelectionChanged"/>
+                    <ListBox x:Name="lb5" Grid.Column="5" DataContext="{Binding}" MouseDoubleClick="SelectionChanged"/>
                 </Grid>
             </ScrollViewer>
         </Border>

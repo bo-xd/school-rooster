@@ -30,8 +30,10 @@ namespace WpfRoosterMaker
         }
 
         public static DataTable dt_klassen = new DataTable();
-        public static DataTable dt_rooster = new DataTable();
-        
+        public static ListBoxItem SelectedListBox = new ListBoxItem();
+
+
+        List<ListBox> lists = new List<ListBox>();
 
         public static MySqlConnection Connect()
         {
@@ -63,6 +65,11 @@ namespace WpfRoosterMaker
         private void LoadAgenda()
         {
             dpWeek.SelectedDate = DateTime.Now;
+            lists.Add(lb1);
+            lists.Add(lb2);
+            lists.Add(lb3);
+            lists.Add(lb4);
+            lists.Add(lb5);
             Read();
         }
 
@@ -87,6 +94,7 @@ namespace WpfRoosterMaker
             CreateWindow createwindow = new CreateWindow();
             createwindow.Owner = this;
             createwindow.ShowDialog();
+            Read();
         }
 
         public static void Create(string lesnaam, string klas, string datum, string fromtime, string totime)
@@ -105,18 +113,81 @@ namespace WpfRoosterMaker
 
         private void Read()
         {
-            List list = new List();
-            list.DataContext = gridAgenda.Children.OfType<List>;
+            cbKlas.Items.Clear();
+            dt_klassen.Clear();
+
             MySqlConnection connection = Connect();
-            MySqlCommand cmd = new MySqlCommand("SELECT * FROM `rooster` WHERE `datum`=@datum", connection);
-            connection.Open();
-            dt_rooster.Load(cmd.ExecuteReader());
-            connection.Close();
+            MySqlCommand cmd = new MySqlCommand();
+
+            for (int i = 0; i < lists.Count; i++)
+            {
+                lists[i].Items.Clear();
+                DataTable dt_rooster = new DataTable();
+                cmd = new MySqlCommand("SELECT * FROM `rooster` WHERE `datum`=@datum AND `klas`=@klas ORDER BY `begintijd` ASC", connection);
+                DateTime day = dpWeek.SelectedDate.Value.AddDays(i);
+                ListBoxItem item = new ListBoxItem();
+                item.Focusable = false;
+                item.Content = day.Date.ToString("yyyy/MM/dd");
+                lists[i].Items.Add(item);
+                cmd.Parameters.AddWithValue("@datum", day.ToString("yyyy/MM/dd"));
+                cmd.Parameters.AddWithValue("@klas", cbKlas.Text);
+                connection.Open();
+                dt_rooster.Load(cmd.ExecuteReader());
+                connection.Close();
+                foreach (DataRow row in dt_rooster.Rows)
+                {
+                    string begintijd = row["begintijd"].ToString().Insert(2,":");
+                    string eindtijd = row["eindtijd"].ToString().Insert(2,":");
+                    ListBoxItem listBoxItem = new ListBoxItem();
+                    listBoxItem.Tag = row["id"];
+                    listBoxItem.Content = $"{begintijd}-{eindtijd} \n {row["les"]} \n {row["klas"]}";
+                    lists[i].Items.Add(listBoxItem);
+                }
+            }
             cmd = new MySqlCommand("SELECT `klas` FROM `klassen`", connection);
             connection.Open();
             dt_klassen.Load(cmd.ExecuteReader());
             connection.Close();
+            Console.WriteLine("test1");
+            foreach (DataRow row in MainWindow.dt_klassen.Rows)
+            {
+                Console.WriteLine("test2");
+                cbKlas.Items.Add(row["klas"]);
+            }
         }
 
+        public static void Update(string lesnaam, string klas, string datum, string fromtime, string totime)
+        {
+            MySqlConnection connection = Connect();
+            MySqlCommand cmd = new MySqlCommand(@"UPDATE rooster SET klas = @klas, les = @les, begintijd = @begintijd, eindtijd = @eindtijd WHERE `id`=@id", connection);
+            cmd.Parameters.AddWithValue("@les", lesnaam);
+            cmd.Parameters.AddWithValue("@klas", klas);
+            cmd.Parameters.AddWithValue("@datum", datum);
+            cmd.Parameters.AddWithValue("@begintijd", fromtime);
+            cmd.Parameters.AddWithValue("@eindtijd", totime);
+            cmd.Parameters.AddWithValue("@id", MainWindow.SelectedListBox.Tag);
+            connection.Open();
+            cmd.ExecuteNonQuery();
+            connection.Close();
+
+        }
+
+        private void SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            ListBox listbox = sender as ListBox;
+            if (listbox.SelectedItem != null)
+            {
+                UpdateWindow updatewindow = new UpdateWindow();
+                SelectedListBox = (ListBoxItem)listbox.SelectedItem;
+                updatewindow.ShowDialog();
+                Read();
+                listbox.SelectedItem = null;
+            }
+        }
+
+        private void cbKlas_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Read();
+        }
     }
 }
