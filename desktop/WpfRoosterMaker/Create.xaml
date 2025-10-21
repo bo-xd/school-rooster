@@ -1,4 +1,4 @@
-﻿<Window x:Class="WpfRoosterMaker.Create"
+﻿<Window x:Class="WpfRoosterMaker.CreateWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,6 +7,40 @@
         mc:Ignorable="d"
         Title="Create" Height="400" Width="350">
     <Grid>
-        
+        <StackPanel Margin="10">
+            <Label Content="Creëer planning"/>
+            <Label Content="Les"/>
+            <TextBox x:Name="tbLes"/>
+            <Label Content="Klas"/>
+            <ComboBox x:Name="cbKlas" ItemsSource="{Binding}"/>
+            <Label Content="From:"/>
+            <DatePicker x:Name="dpFrom"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="0.2*"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <ComboBox x:Name="cbHoursFrom" Grid.Column="1"/>
+                <Label Content=":" Grid.Column="2"/>
+                <ComboBox x:Name="cbMinutesFrom" Grid.Column="3"/>
+            </Grid>
+            <Label Content="To:"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="0.2*"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <ComboBox x:Name="cbHoursTo" Grid.Column="1"/>
+                <Label Content=":" Grid.Column="2"/>
+                <ComboBox x:Name="cbMinutesTo" Grid.Column="3"/>
+            </Grid>
+            <Button x:Name="btnCreate" Content="Create" Click="btnCreate_Click"/>
+        </StackPanel>
     </Grid>
 </Window>
