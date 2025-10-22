@@ -8,10 +8,11 @@
 body {
     background-color: #f0f0f0;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-start;
     align-items: center;
     min-height: 100vh;
-    padding: 20px;
+    padding: 80px 20px 20px;
 }
 
 .navbar{
@@ -140,4 +141,55 @@ body {
     border-color: #4caf50 !important;
     color: #1b4d1b;
     box-shadow: 0 0 8px 2px #4caf5040;
+}
+
+.week-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin: 18px auto 32px;
+    width: 100%;
+    max-width: 1400px;
+    padding: 0 12px;
+}
+
+.week-nav__btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: white;
+    color: #4a90e2;
+    border: 1px solid #dfe6ef;
+    text-decoration: none;
+    font-size: 22px;
+    line-height: 1;
+    box-shadow: 0 2px 8px rgba(74,144,226,0.12);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+
+.week-nav__btn:hover,
+.week-nav__btn:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(74,144,226,0.18);
+    background: #f6fbff;
+}
+
+.week-nav__label {
+    font-weight: 600;
+    color: #2c3e50;
+    background: transparent;
+    font-size: 14px;
+    padding: 6px 10px;
+    border-radius: 8px;
+}
+
+@media (max-width: 640px) {
+    .Agenda { flex-direction: column; }
+    .week-nav { margin-top: 100px; gap: 8px; }
+    .week-nav__label { font-size: 13px; }
+    .week-nav__btn { width: 40px; height: 40px; font-size: 20px; }
 }
