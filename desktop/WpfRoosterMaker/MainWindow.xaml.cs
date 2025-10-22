@@ -38,7 +38,7 @@ namespace WpfRoosterMaker
 
         public static MySqlConnection Connect()
         {
-            string connectionstring = "SERVER=localhost;DATABASE=roosterprojecttest;UID=root;PASSWORD=";
+            string connectionstring = "SERVER=localhost;DATABASE=DBAgenda;UID=root;PASSWORD=";
             try
             {
                 MySqlConnection cnct = new MySqlConnection(connectionstring);
@@ -73,27 +73,46 @@ namespace WpfRoosterMaker
             lists.Add(lb5);
 
             MySqlConnection connection = Connect();
-            MySqlCommand cmd = new MySqlCommand("SELECT `klas` FROM `klassen` ORDER BY `klas` ASC", connection);
-            connection.Open();
-            dt_klassen.Load(cmd.ExecuteReader());
-            connection.Close();
-            Console.WriteLine("test1");
+            if (connection == null) return;
+
+            // Some deployments don't have a separate 'klassen' table. Use DISTINCT klas from `schedule` so the app works with the PHP schema.
+            MySqlCommand cmd = new MySqlCommand("SELECT DISTINCT `klas` FROM `schedule` ORDER BY `klas` ASC", connection);
+            try
+            {
+                connection.Open();
+                dt_klassen.Load(cmd.ExecuteReader());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading classes: " + ex.Message);
+            }
+            finally
+            {
+                try { connection.Close(); } catch { }
+            }
+
             foreach (DataRow row in MainWindow.dt_klassen.Rows)
             {
-                Console.WriteLine("test2");
-                cbKlas.Items.Add(row["klas"]);
+                var value = row["klas"];
+                if (value != null && value != DBNull.Value)
+                    cbKlas.Items.Add(value.ToString());
             }
-            cbKlas.SelectedIndex = 0;
+            if (cbKlas.Items.Count > 0)
+                cbKlas.SelectedIndex = 0;
         }
 
         private void ChangeDate(int index)
         {
-            dpWeek.SelectedDate = ((DateTime)dpWeek.SelectedDate).AddDays(index * 7);
+            if (dpWeek.SelectedDate.HasValue)
+                dpWeek.SelectedDate = dpWeek.SelectedDate.Value.AddDays(index * 7);
+            else
+                dpWeek.SelectedDate = DateTime.Now.AddDays(index * 7);
         }
 
         private void dpWeek_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
-            var newDate = (DateTime)e.AddedItems[0];
+            // Make this robust: use dpWeek.SelectedDate if available
+            DateTime newDate = dpWeek.SelectedDate ?? DateTime.Now;
 
             while (newDate.DayOfWeek != dpWeek.FirstDayOfWeek)
                 newDate = newDate.AddDays(-1);
@@ -111,79 +130,147 @@ namespace WpfRoosterMaker
             Read();
         }
 
-        public static void Create(string lesnaam, string klas, string datum, string fromtime, string totime)
+        public static void Create(string subject, string klas, string scheduleDate, string beginTime, string endTime)
         {
             MySqlConnection connection = Connect();
-            MySqlCommand cmd = new MySqlCommand(@"INSERT INTO rooster (les, klas, datum, begintijd, eindtijd) VALUES (@les, @klas, @datum, @begintijd, @eindtijd)", connection);
-            cmd.Parameters.AddWithValue("@les", lesnaam);
-            cmd.Parameters.AddWithValue("@klas", klas);
-            cmd.Parameters.AddWithValue("@datum", datum);
-            cmd.Parameters.AddWithValue("@begintijd", fromtime);
-            cmd.Parameters.AddWithValue("@eindtijd", totime);
-            connection.Open();
-            cmd.ExecuteNonQuery();
-            connection.Close();
+            if (connection == null) return;
+
+            MySqlCommand cmd = new MySqlCommand(@"INSERT INTO `schedule` (klas, schedule_date, subject, teacher, room, begin_time, end_time) VALUES (@klas, @schedule_date, @subject, @teacher, @room, @begin_time, @end_time)", connection);
+            cmd.Parameters.AddWithValue("@subject", subject ?? string.Empty);
+            cmd.Parameters.AddWithValue("@klas", klas ?? string.Empty);
+            if (!int.TryParse(scheduleDate, out int scheduleDateValue)) scheduleDateValue = 0;
+            cmd.Parameters.AddWithValue("@schedule_date", scheduleDateValue);
+            cmd.Parameters.AddWithValue("@begin_time", beginTime ?? string.Empty);
+            cmd.Parameters.AddWithValue("@end_time", endTime ?? string.Empty);
+            // UI doesn't collect teacher/room yet - insert empty strings so schema matches
+            cmd.Parameters.AddWithValue("@teacher", string.Empty);
+            cmd.Parameters.AddWithValue("@room", string.Empty);
+            try
+            {
+                connection.Open();
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error inserting schedule: " + ex.Message);
+            }
+            finally
+            {
+                try { connection.Close(); } catch { }
+            }
         }
 
         private void Read()
         {
             MySqlConnection connection = Connect();
-            MySqlCommand cmd;
+            if (connection == null) return;
 
-            
+            if (cbKlas.SelectedItem == null) return;
 
             for (int i = 0; i < lists.Count; i++)
             {
                 lists[i].Items.Clear();
                 DataTable dt_rooster = new DataTable();
-                cmd = new MySqlCommand("SELECT * FROM `rooster` WHERE `datum`=@datum AND `klas`=@klas ORDER BY `begintijd` ASC", connection);
-                DateTime day = dpWeek.SelectedDate.Value.AddDays(i);
-                ListBoxItem item = new ListBoxItem();
-                item.Focusable = false;
-                item.Content = day.Date.ToString("yyyy/MM/dd");
-                lists[i].Items.Add(item);
-                cmd.Parameters.AddWithValue("@datum", day.ToString("yyyy/MM/dd"));
-                cmd.Parameters.AddWithValue("@klas", cbKlas.SelectedItem);
-                connection.Open();
-                dt_rooster.Load(cmd.ExecuteReader());
-                connection.Close();
+                using (MySqlCommand cmd = new MySqlCommand("SELECT `id`,`klas`,`schedule_date`,`subject`,`teacher`,`room`,`begin_time`,`end_time` FROM `schedule` WHERE `schedule_date`=@schedule_date AND `klas`=@klas ORDER BY `begin_time` ASC", connection))
+                {
+                    DateTime baseDay = dpWeek.SelectedDate ?? DateTime.Now;
+                    DateTime day = baseDay.AddDays(i);
+                    ListBoxItem item = new ListBoxItem();
+                    item.Focusable = false;
+                    item.Content = day.Date.ToString("yyyy/MM/dd");
+                    lists[i].Items.Add(item);
+
+                    string scheduleDateInt = day.ToString("yyyyMMdd");
+                    if (!int.TryParse(scheduleDateInt, out int scheduleDateValue)) scheduleDateValue = 0;
+                    cmd.Parameters.AddWithValue("@schedule_date", scheduleDateValue);
+                    cmd.Parameters.AddWithValue("@klas", cbKlas.SelectedItem.ToString());
+                    try
+                    {
+                        connection.Open();
+                        dt_rooster.Load(cmd.ExecuteReader());
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error reading schedule: " + ex.Message);
+                    }
+                    finally
+                    {
+                        try { connection.Close(); } catch { }
+                    }
+                }
+
                 foreach (DataRow row in dt_rooster.Rows)
                 {
-                    string begintijd = row["begintijd"].ToString().Insert(2,":");
-                    string eindtijd = row["eindtijd"].ToString().Insert(2,":");
+                    string begintijd = row["begin_time"].ToString();
+                    if (begintijd.Length == 4) begintijd = begintijd.Insert(2, ":");
+                    string eindtijd = row["end_time"].ToString();
+                    if (eindtijd.Length == 4) eindtijd = eindtijd.Insert(2, ":");
                     ListBoxItem listBoxItem = new ListBoxItem();
                     listBoxItem.Tag = row["id"];
-                    listBoxItem.Content = $"{begintijd}-{eindtijd} \n {row["les"]} \n {row["klas"]}";
+                    string subject = row["subject"].ToString();
+                    string klas = row["klas"].ToString();
+                    string teacher = row.Table.Columns.Contains("teacher") ? row["teacher"].ToString() : string.Empty;
+                    string room = row.Table.Columns.Contains("room") ? row["room"].ToString() : string.Empty;
+                    string extra = "";
+                    if (!string.IsNullOrEmpty(teacher)) extra += "Teacher: " + teacher + " ";
+                    if (!string.IsNullOrEmpty(room)) extra += "Room: " + room;
+                    listBoxItem.Content = $"{begintijd}-{eindtijd} \n {subject} \n {klas} {extra}";
                     lists[i].Items.Add(listBoxItem);
                 }
             }
-            
+
         }
 
-        public static void Update(string lesnaam, string klas, string datum, string fromtime, string totime)
+        public static void Update(string subject, string klas, string scheduleDate, string beginTime, string endTime)
         {
             MySqlConnection connection = Connect();
-            MySqlCommand cmd = new MySqlCommand(@"UPDATE rooster SET klas = @klas, les = @les, begintijd = @begintijd, eindtijd = @eindtijd WHERE `id`=@id", connection);
-            cmd.Parameters.AddWithValue("@les", lesnaam);
-            cmd.Parameters.AddWithValue("@klas", klas);
-            cmd.Parameters.AddWithValue("@datum", datum);
-            cmd.Parameters.AddWithValue("@begintijd", fromtime);
-            cmd.Parameters.AddWithValue("@eindtijd", totime);
+            if (connection == null) return;
+            if (MainWindow.SelectedListBox == null || MainWindow.SelectedListBox.Tag == null) return;
+
+            MySqlCommand cmd = new MySqlCommand(@"UPDATE `schedule` SET klas = @klas, schedule_date = @schedule_date, subject = @subject, begin_time = @begin_time, end_time = @end_time WHERE `id`=@id", connection);
+            cmd.Parameters.AddWithValue("@subject", subject ?? string.Empty);
+            cmd.Parameters.AddWithValue("@klas", klas ?? string.Empty);
+            if (!int.TryParse(scheduleDate, out int scheduleDateValue2)) scheduleDateValue2 = 0;
+            cmd.Parameters.AddWithValue("@schedule_date", scheduleDateValue2);
+            cmd.Parameters.AddWithValue("@begin_time", beginTime ?? string.Empty);
+            cmd.Parameters.AddWithValue("@end_time", endTime ?? string.Empty);
             cmd.Parameters.AddWithValue("@id", MainWindow.SelectedListBox.Tag);
-            connection.Open();
-            cmd.ExecuteNonQuery();
-            connection.Close();
+            try
+            {
+                connection.Open();
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error updating schedule: " + ex.Message);
+            }
+            finally
+            {
+                try { connection.Close(); } catch { }
+            }
 
         }
 
         public static void Delete(string id)
         {
             MySqlConnection connection = Connect();
-            MySqlCommand cmd = new MySqlCommand(@"DELETE FROM rooster WHERE id = @id", connection);
+            if (connection == null) return;
+
+            MySqlCommand cmd = new MySqlCommand(@"DELETE FROM `schedule` WHERE id = @id", connection);
             cmd.Parameters.AddWithValue("@id", id);
-            connection.Open();
-            cmd.ExecuteNonQuery();
-            connection.Close();
+            try
+            {
+                connection.Open();
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error deleting schedule: " + ex.Message);
+            }
+            finally
+            {
+                try { connection.Close(); } catch { }
+            }
         }
 
         private void SelectionChanged(object sender, RoutedEventArgs e)

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,26 +50,48 @@ namespace WpfRoosterMaker
 
             DataTable dt_selected = new DataTable();
             MySqlConnection connection = MainWindow.Connect();
-            MySqlCommand cmd = new MySqlCommand("SELECT * FROM `rooster` WHERE `id`=@id", connection);
+            // Use the `schedule` table and PHP schema column names
+            MySqlCommand cmd = new MySqlCommand("SELECT `id`,`klas`,`schedule_date`,`subject`,`teacher`,`room`,`begin_time`,`end_time` FROM `schedule` WHERE `id`=@id", connection);
             cmd.Parameters.AddWithValue("@id", MainWindow.SelectedListBox.Tag);
             Console.WriteLine(MainWindow.SelectedListBox.Tag);
-            connection.Open();
-            dt_selected.Load(cmd.ExecuteReader());
-            connection.Close();
+            try
+            {
+                connection.Open();
+                dt_selected.Load(cmd.ExecuteReader());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading selection: " + ex.Message);
+            }
+            finally
+            {
+                try { connection.Close(); } catch { }
+            }
 
             foreach (DataRow row in dt_selected.Rows)
             {
                 Console.WriteLine(row["klas"]);
                 cbKlas.SelectedItem = row["klas"].ToString();
-                tbLes.Text = row["les"].ToString();
+                tbLes.Text = row["subject"].ToString();
 
-                cbHoursFrom.SelectedItem = row["begintijd"].ToString().Substring(0,2);
-                cbHoursTo.SelectedItem = row["eindtijd"].ToString().Substring(0, 2);
+                string begintijd = row["begin_time"].ToString();
+                string eindtijd = row["end_time"].ToString();
+                if (!string.IsNullOrEmpty(begintijd) && begintijd.Length >= 2)
+                    cbHoursFrom.SelectedItem = begintijd.Substring(0, 2);
+                if (!string.IsNullOrEmpty(eindtijd) && eindtijd.Length >= 2)
+                    cbHoursTo.SelectedItem = eindtijd.Substring(0, 2);
 
-                cbMinutesFrom.SelectedItem = row["begintijd"].ToString().Substring(2);
-                cbMinutesTo.SelectedItem = row["eindtijd"].ToString().Substring(2);
+                if (!string.IsNullOrEmpty(begintijd) && begintijd.Length == 4)
+                    cbMinutesFrom.SelectedItem = begintijd.Substring(2);
+                if (!string.IsNullOrEmpty(eindtijd) && eindtijd.Length == 4)
+                    cbMinutesTo.SelectedItem = eindtijd.Substring(2);
 
-                dpFrom.SelectedDate = DateTime.Parse(row["datum"].ToString());
+                string scheduleDateStr = row["schedule_date"].ToString();
+                if (!string.IsNullOrEmpty(scheduleDateStr))
+                {
+                    if (DateTime.TryParseExact(scheduleDateStr, "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate))
+                        dpFrom.SelectedDate = parsedDate;
+                }
             }
         }
 
@@ -76,7 +99,7 @@ namespace WpfRoosterMaker
         {
             string lesnaam = tbLes.Text;
             string klas = cbKlas.Text;
-            string fromdate = dpFrom.SelectedDate.Value.ToString("yyyy/MM/dd");
+            string fromdate = dpFrom.SelectedDate.Value.ToString("yyyyMMdd");
             string fromtime = $"{cbHoursFrom.Text}{string.Format("{0:D2}", cbMinutesFrom.Text)}";
             string totime = $"{cbHoursTo.Text}{string.Format("{0:D2}", cbMinutesTo.Text)}";
             MainWindow.Update(lesnaam, klas, fromdate, fromtime, totime);

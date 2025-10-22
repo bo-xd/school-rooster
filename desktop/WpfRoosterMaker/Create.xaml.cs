@@ -1,17 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace WpfRoosterMaker
 {
@@ -45,12 +35,12 @@ namespace WpfRoosterMaker
                 cbMinutesTo.Items.Add(string.Format("{0:D2}", i));
             }
             cbHoursFrom.SelectedItem = string.Format("{0:D2}", time.Hour);
-            cbHoursTo.SelectedItem = string.Format("{0:D2}", time.Hour + 1);
+            cbHoursTo.SelectedItem = string.Format("{0:D2}", (time.Hour + 1) % 24);
 
             cbMinutesFrom.SelectedItem = "00";
             cbMinutesTo.SelectedItem = "00";
 
-            dpFrom.SelectedDate = MainWindow.SelectedWeek;
+            dpFrom.SelectedDate = MainWindow.SelectedWeek != default ? MainWindow.SelectedWeek : DateTime.Now;
             cbKlas.SelectedItem = MainWindow.SelectedKlas;
         }
 
@@ -58,9 +48,10 @@ namespace WpfRoosterMaker
         {
             string lesnaam = tbLes.Text;
             string klas = cbKlas.Text;
-            string fromdate = dpFrom.SelectedDate.Value.ToString("yyyy/MM/dd");
-            string fromtime = $"{cbHoursFrom.Text}{string.Format("{0:D2}", cbMinutesFrom.Text)}";
-            string totime = $"{cbHoursTo.Text}{string.Format("{0:D2}", cbMinutesTo.Text)}";
+            DateTime selDate = dpFrom.SelectedDate ?? DateTime.Now;
+            string fromdate = selDate.ToString("yyyyMMdd");
+            string fromtime = (cbHoursFrom.Text ?? "00").PadLeft(2, '0') + (cbMinutesFrom.Text ?? "00").PadLeft(2, '0');
+            string totime = (cbHoursTo.Text ?? "00").PadLeft(2, '0') + (cbMinutesTo.Text ?? "00").PadLeft(2, '0');
             MainWindow.Create(lesnaam, klas, fromdate, fromtime, totime);
             Console.WriteLine(lesnaam);
             Console.WriteLine(klas);
