@@ -45,11 +45,31 @@ namespace WpfRoosterMaker
                 cbMinutesFrom.Items.Add(string.Format("{0:D2}", i));
                 cbMinutesTo.Items.Add(string.Format("{0:D2}", i));
             }
-            cbHoursFrom.SelectedItem = string.Format("{0:D2}", time.Hour);
-            cbHoursTo.SelectedItem = string.Format("{0:D2}", time.Hour + 1);
 
-            cbMinutesFrom.SelectedItem = "00";
-            cbMinutesTo.SelectedItem = "00";
+
+            DataTable dt_selected = new DataTable();
+            MySqlConnection connection = MainWindow.Connect();
+            MySqlCommand cmd = new MySqlCommand("SELECT * FROM `rooster` WHERE `id`=@id", connection);
+            cmd.Parameters.AddWithValue("@id", MainWindow.SelectedListBox.Tag);
+            Console.WriteLine(MainWindow.SelectedListBox.Tag);
+            connection.Open();
+            dt_selected.Load(cmd.ExecuteReader());
+            connection.Close();
+
+            foreach (DataRow row in dt_selected.Rows)
+            {
+                Console.WriteLine(row["klas"]);
+                cbKlas.SelectedItem = row["klas"].ToString();
+                tbLes.Text = row["les"].ToString();
+
+                cbHoursFrom.SelectedItem = row["begintijd"].ToString().Substring(0,2);
+                cbHoursTo.SelectedItem = row["eindtijd"].ToString().Substring(0, 2);
+
+                cbMinutesFrom.SelectedItem = row["begintijd"].ToString().Substring(2);
+                cbMinutesTo.SelectedItem = row["eindtijd"].ToString().Substring(2);
+
+                dpFrom.SelectedDate = DateTime.Parse(row["datum"].ToString());
+            }
         }
 
         private void btnUpdate_Click(object sender, RoutedEventArgs e)
@@ -60,6 +80,12 @@ namespace WpfRoosterMaker
             string fromtime = $"{cbHoursFrom.Text}{string.Format("{0:D2}", cbMinutesFrom.Text)}";
             string totime = $"{cbHoursTo.Text}{string.Format("{0:D2}", cbMinutesTo.Text)}";
             MainWindow.Update(lesnaam, klas, fromdate, fromtime, totime);
+            this.Close();
+        }
+
+        private void btnDelete_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow.Delete(MainWindow.SelectedListBox.Tag.ToString());
             this.Close();
         }
     }

@@ -31,7 +31,8 @@ namespace WpfRoosterMaker
 
         public static DataTable dt_klassen = new DataTable();
         public static ListBoxItem SelectedListBox = new ListBoxItem();
-
+        public static DateTime SelectedWeek = new DateTime();
+        public static string SelectedKlas = "";
 
         List<ListBox> lists = new List<ListBox>();
 
@@ -70,7 +71,19 @@ namespace WpfRoosterMaker
             lists.Add(lb3);
             lists.Add(lb4);
             lists.Add(lb5);
-            Read();
+
+            MySqlConnection connection = Connect();
+            MySqlCommand cmd = new MySqlCommand("SELECT `klas` FROM `klassen` ORDER BY `klas` ASC", connection);
+            connection.Open();
+            dt_klassen.Load(cmd.ExecuteReader());
+            connection.Close();
+            Console.WriteLine("test1");
+            foreach (DataRow row in MainWindow.dt_klassen.Rows)
+            {
+                Console.WriteLine("test2");
+                cbKlas.Items.Add(row["klas"]);
+            }
+            cbKlas.SelectedIndex = 0;
         }
 
         private void ChangeDate(int index)
@@ -86,6 +99,7 @@ namespace WpfRoosterMaker
                 newDate = newDate.AddDays(-1);
 
             dpWeek.SelectedDate = newDate;
+            SelectedWeek = dpWeek.SelectedDate.Value;
             Read();
         }
 
@@ -113,11 +127,10 @@ namespace WpfRoosterMaker
 
         private void Read()
         {
-            cbKlas.Items.Clear();
-            dt_klassen.Clear();
-
             MySqlConnection connection = Connect();
-            MySqlCommand cmd = new MySqlCommand();
+            MySqlCommand cmd;
+
+            
 
             for (int i = 0; i < lists.Count; i++)
             {
@@ -130,7 +143,7 @@ namespace WpfRoosterMaker
                 item.Content = day.Date.ToString("yyyy/MM/dd");
                 lists[i].Items.Add(item);
                 cmd.Parameters.AddWithValue("@datum", day.ToString("yyyy/MM/dd"));
-                cmd.Parameters.AddWithValue("@klas", cbKlas.Text);
+                cmd.Parameters.AddWithValue("@klas", cbKlas.SelectedItem);
                 connection.Open();
                 dt_rooster.Load(cmd.ExecuteReader());
                 connection.Close();
@@ -144,16 +157,7 @@ namespace WpfRoosterMaker
                     lists[i].Items.Add(listBoxItem);
                 }
             }
-            cmd = new MySqlCommand("SELECT `klas` FROM `klassen`", connection);
-            connection.Open();
-            dt_klassen.Load(cmd.ExecuteReader());
-            connection.Close();
-            Console.WriteLine("test1");
-            foreach (DataRow row in MainWindow.dt_klassen.Rows)
-            {
-                Console.WriteLine("test2");
-                cbKlas.Items.Add(row["klas"]);
-            }
+            
         }
 
         public static void Update(string lesnaam, string klas, string datum, string fromtime, string totime)
@@ -172,21 +176,34 @@ namespace WpfRoosterMaker
 
         }
 
+        public static void Delete(string id)
+        {
+            MySqlConnection connection = Connect();
+            MySqlCommand cmd = new MySqlCommand(@"DELETE FROM rooster WHERE id = @id", connection);
+            cmd.Parameters.AddWithValue("@id", id);
+            connection.Open();
+            cmd.ExecuteNonQuery();
+            connection.Close();
+        }
+
         private void SelectionChanged(object sender, RoutedEventArgs e)
         {
             ListBox listbox = sender as ListBox;
             if (listbox.SelectedItem != null)
             {
-                UpdateWindow updatewindow = new UpdateWindow();
                 SelectedListBox = (ListBoxItem)listbox.SelectedItem;
+                UpdateWindow updatewindow = new UpdateWindow();
                 updatewindow.ShowDialog();
                 Read();
                 listbox.SelectedItem = null;
             }
         }
 
+
+
         private void cbKlas_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            SelectedKlas = (sender as ComboBox).SelectedItem.ToString();
             Read();
         }
     }

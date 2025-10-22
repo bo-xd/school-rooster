@@ -41,6 +41,7 @@
                 <ComboBox x:Name="cbMinutesTo" Grid.Column="3"/>
             </Grid>
             <Button x:Name="btnUpdate" Content="Update" Click="btnUpdate_Click"/>
+            <Button x:Name="btnDelete" Content="Delete" Click="btnDelete_Click"/>
         </StackPanel>
     </Grid>
 </Window>

@@ -49,6 +49,9 @@ namespace WpfRoosterMaker
 
             cbMinutesFrom.SelectedItem = "00";
             cbMinutesTo.SelectedItem = "00";
+
+            dpFrom.SelectedDate = MainWindow.SelectedWeek;
+            cbKlas.SelectedItem = MainWindow.SelectedKlas;
         }
 
         private void btnCreate_Click(object sender, RoutedEventArgs e)
