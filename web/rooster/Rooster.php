@@ -45,6 +45,10 @@ while ($row = $result->fetch_assoc()) {
 }
 $stmt->close();
 $conn->close();
+
+date_default_timezone_set('Europe/Rome');
+$current_day = strtolower(date('l'));
+$current_time = date('Hi');
 ?>
 <!doctype html>
 <html lang="en">
@@ -74,7 +78,10 @@ $conn->close();
                 <li class="schedule-item">Geen lessen</li>
             <?php else: ?>
                 <?php foreach ($rooster_data[$monday_sql_date] as $item): ?>
-                    <li class="schedule-item">
+                    <?php
+                        $is_current = ($current_day === 'monday' && $current_time >= $item['begin_time'] && $current_time < $item['end_time']);
+                    ?>
+                    <li class="schedule-item<?php if ($is_current) echo ' current-lesson'; ?>">
                         <div class="subject"><?php echo htmlspecialchars($item['subject']); ?></div>
                         <div class="teacher"><?php echo htmlspecialchars($item['teacher']); ?></div>
                         <div class="room"><?php echo htmlspecialchars($item['room']); ?></div>
@@ -105,7 +112,10 @@ $conn->close();
                 <li class="schedule-item">Geen lessen</li>
             <?php else: ?>
                 <?php foreach ($rooster_data[$tuesday_sql_date] as $item): ?>
-                    <li class="schedule-item">
+                    <?php
+                        $is_current = ($current_day === 'tuesday' && $current_time >= $item['begin_time'] && $current_time < $item['end_time']);
+                    ?>
+                    <li class="schedule-item<?php if ($is_current) echo ' current-lesson'; ?>">
                         <div class="subject"><?php echo htmlspecialchars($item['subject']); ?></div>
                         <div class="teacher"><?php echo htmlspecialchars($item['teacher']); ?></div>
                         <div class="room"><?php echo htmlspecialchars($item['room']); ?></div>
@@ -136,7 +146,10 @@ $conn->close();
                 <li class="schedule-item">Geen lessen</li>
             <?php else: ?>
                 <?php foreach ($rooster_data[$wednesday_sql_date] as $item): ?>
-                    <li class="schedule-item">
+                    <?php
+                        $is_current = ($current_day === 'wednesday' && $current_time >= $item['begin_time'] && $current_time < $item['end_time']);
+                    ?>
+                    <li class="schedule-item<?php if ($is_current) echo ' current-lesson'; ?>">
                         <div class="subject"><?php echo htmlspecialchars($item['subject']); ?></div>
                         <div class="teacher"><?php echo htmlspecialchars($item['teacher']); ?></div>
                         <div class="room"><?php echo htmlspecialchars($item['room']); ?></div>
@@ -167,7 +180,10 @@ $conn->close();
                 <li class="schedule-item">Geen lessen</li>
             <?php else: ?>
                 <?php foreach ($rooster_data[$thursday_sql_date] as $item): ?>
-                    <li class="schedule-item">
+                    <?php
+                        $is_current = ($current_day === 'thursday' && $current_time >= $item['begin_time'] && $current_time < $item['end_time']);
+                    ?>
+                    <li class="schedule-item<?php if ($is_current) echo ' current-lesson'; ?>">
                         <div class="subject"><?php echo htmlspecialchars($item['subject']); ?></div>
                         <div class="teacher"><?php echo htmlspecialchars($item['teacher']); ?></div>
                         <div class="room"><?php echo htmlspecialchars($item['room']); ?></div>
@@ -198,7 +214,10 @@ $conn->close();
                 <li class="schedule-item">Geen lessen</li>
             <?php else: ?>
                 <?php foreach ($rooster_data[$friday_sql_date] as $item): ?>
-                    <li class="schedule-item">
+                    <?php
+                        $is_current = ($current_day === 'friday' && $current_time >= $item['begin_time'] && $current_time < $item['end_time']);
+                    ?>
+                    <li class="schedule-item<?php if ($is_current) echo ' current-lesson'; ?>">
                         <div class="subject"><?php echo htmlspecialchars($item['subject']); ?></div>
                         <div class="teacher"><?php echo htmlspecialchars($item['teacher']); ?></div>
                         <div class="room"><?php echo htmlspecialchars($item['room']); ?></div>
@@ -221,7 +240,6 @@ $conn->close();
             <?php endif; ?>
         </ul>
     </div>
-
 </div>
 </body>
 </html>
