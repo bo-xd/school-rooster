@@ -3,12 +3,8 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-session_start();
-
-if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-    header("location: ../auth/login.html");
-    exit;
-}
+require_once(__DIR__ . '../../auth/php/middleware.php');
+require_auth();
 
 $user_klas = $_SESSION['klas'];
 
@@ -44,6 +40,8 @@ $sql = "SELECT schedule_date, subject, teacher, room, begin_time, end_time
     FROM schedule
     WHERE klas = ? AND schedule_date BETWEEN ? AND ?
     ORDER BY schedule_date, begin_time, end_time";
+
+/** @var TYPE_NAME $conn */
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("sss", $user_klas, $monday_sql_date, $friday_sql_date);
 $stmt->execute();
@@ -75,7 +73,7 @@ $current_time = date('Hi');
             Ingelogd als: <?php echo htmlspecialchars($_SESSION['username']); ?>
             (Klas: <?php echo htmlspecialchars($user_klas); ?>)
         </span>
-    <form action="../auth/login.html"> <input type="submit" value="Logout" class="logout"/>
+    <form action="../auth/php/logout.php"> <input type="submit" value="Logout" class="logout"/>
     </form>
 </header>
 

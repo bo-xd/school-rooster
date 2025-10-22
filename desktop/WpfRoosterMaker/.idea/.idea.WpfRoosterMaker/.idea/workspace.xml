@@ -8,14 +8,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ee68724c-edb1-4a22-8b03-7a9b7f4c2705" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Create.xaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Create.xaml.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MainWindow.xaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MainWindow.xaml.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Update.xaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Update.xaml.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/Debug/WpfRoosterMaker.exe" beforeDir="false" afterPath="$PROJECT_DIR$/bin/Debug/WpfRoosterMaker.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/Debug/WpfRoosterMaker.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/bin/Debug/WpfRoosterMaker.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/obj/Debug/WpfRoosterMaker.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/WpfRoosterMaker.csproj.AssemblyReference.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/obj/Debug/WpfRoosterMaker.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/WpfRoosterMaker.csproj.CoreCompileInputs.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/obj/Debug/WpfRoosterMaker.csproj.FileListAbsolute.txt" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/WpfRoosterMaker.csproj.FileListAbsolute.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/obj/Debug/WpfRoosterMaker.csproj.GenerateResource.cache" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/WpfRoosterMaker.csproj.GenerateResource.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/obj/Debug/WpfRoosterMaker.exe" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/WpfRoosterMaker.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/obj/Debug/WpfRoosterMaker.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/WpfRoosterMaker.pdb" afterDir="false" />
@@ -92,6 +88,7 @@
       <updated>1761117016424</updated>
       <workItem from="1761117018656" duration="960000" />
       <workItem from="1761118002510" duration="8000" />
+      <workItem from="1761130227719" duration="187000" />
     </task>
     <servers />
   </component>
