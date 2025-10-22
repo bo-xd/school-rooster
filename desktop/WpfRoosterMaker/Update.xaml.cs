@@ -73,6 +73,8 @@ namespace WpfRoosterMaker
                 Console.WriteLine(row["klas"]);
                 cbKlas.SelectedItem = row["klas"].ToString();
                 tbLes.Text = row["subject"].ToString();
+                tbDocent.Text = row["teacher"].ToString();
+                tbLokaal.Text = row["room"].ToString();
 
                 string begintijd = row["begin_time"].ToString();
                 string eindtijd = row["end_time"].ToString();
@@ -87,11 +89,8 @@ namespace WpfRoosterMaker
                     cbMinutesTo.SelectedItem = eindtijd.Substring(2);
 
                 string scheduleDateStr = row["schedule_date"].ToString();
-                if (!string.IsNullOrEmpty(scheduleDateStr))
-                {
-                    if (DateTime.TryParseExact(scheduleDateStr, "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate))
-                        dpFrom.SelectedDate = parsedDate;
-                }
+                dpFrom.SelectedDate = DateTime.Parse(scheduleDateStr);
+                
             }
         }
 
@@ -100,9 +99,11 @@ namespace WpfRoosterMaker
             string lesnaam = tbLes.Text;
             string klas = cbKlas.Text;
             string fromdate = dpFrom.SelectedDate.Value.ToString("yyyyMMdd");
+            string teacher = tbDocent.Text;
+            string room = tbLokaal.Text;
             string fromtime = $"{cbHoursFrom.Text}{string.Format("{0:D2}", cbMinutesFrom.Text)}";
             string totime = $"{cbHoursTo.Text}{string.Format("{0:D2}", cbMinutesTo.Text)}";
-            MainWindow.Update(lesnaam, klas, fromdate, fromtime, totime);
+            MainWindow.Update(lesnaam, klas, fromdate, teacher, room, fromtime, totime);
             this.Close();
         }
 

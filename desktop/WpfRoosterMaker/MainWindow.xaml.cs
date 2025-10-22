@@ -130,7 +130,7 @@ namespace WpfRoosterMaker
             Read();
         }
 
-        public static void Create(string subject, string klas, string scheduleDate, string beginTime, string endTime)
+        public static void Create(string subject, string klas, string scheduleDate, string teacher, string room, string beginTime, string endTime)
         {
             MySqlConnection connection = Connect();
             if (connection == null) return;
@@ -140,11 +140,10 @@ namespace WpfRoosterMaker
             cmd.Parameters.AddWithValue("@klas", klas ?? string.Empty);
             if (!int.TryParse(scheduleDate, out int scheduleDateValue)) scheduleDateValue = 0;
             cmd.Parameters.AddWithValue("@schedule_date", scheduleDateValue);
+            cmd.Parameters.AddWithValue("@teacher", teacher ?? string.Empty);
+            cmd.Parameters.AddWithValue("@room", room ?? string.Empty);
             cmd.Parameters.AddWithValue("@begin_time", beginTime ?? string.Empty);
             cmd.Parameters.AddWithValue("@end_time", endTime ?? string.Empty);
-            // UI doesn't collect teacher/room yet - insert empty strings so schema matches
-            cmd.Parameters.AddWithValue("@teacher", string.Empty);
-            cmd.Parameters.AddWithValue("@room", string.Empty);
             try
             {
                 connection.Open();
@@ -178,6 +177,9 @@ namespace WpfRoosterMaker
                     ListBoxItem item = new ListBoxItem();
                     item.Focusable = false;
                     item.Content = day.Date.ToString("yyyy/MM/dd");
+                    Style style = this.FindResource("Header") as Style;
+                    item.Style = style;
+                    item.Tag = "Header";
                     lists[i].Items.Add(item);
 
                     string scheduleDateInt = day.ToString("yyyyMMdd");
@@ -211,27 +213,26 @@ namespace WpfRoosterMaker
                     string klas = row["klas"].ToString();
                     string teacher = row.Table.Columns.Contains("teacher") ? row["teacher"].ToString() : string.Empty;
                     string room = row.Table.Columns.Contains("room") ? row["room"].ToString() : string.Empty;
-                    string extra = "";
-                    if (!string.IsNullOrEmpty(teacher)) extra += "Teacher: " + teacher + " ";
-                    if (!string.IsNullOrEmpty(room)) extra += "Room: " + room;
-                    listBoxItem.Content = $"{begintijd}-{eindtijd} \n {subject} \n {klas} {extra}";
+                    listBoxItem.Content = $"{begintijd}-{eindtijd}\n{subject}\n{klas}\n{teacher}\n{room}";
                     lists[i].Items.Add(listBoxItem);
                 }
             }
 
         }
 
-        public static void Update(string subject, string klas, string scheduleDate, string beginTime, string endTime)
+        public static void Update(string subject, string klas, string scheduleDate, string teacher, string room, string beginTime, string endTime)
         {
             MySqlConnection connection = Connect();
             if (connection == null) return;
             if (MainWindow.SelectedListBox == null || MainWindow.SelectedListBox.Tag == null) return;
 
-            MySqlCommand cmd = new MySqlCommand(@"UPDATE `schedule` SET klas = @klas, schedule_date = @schedule_date, subject = @subject, begin_time = @begin_time, end_time = @end_time WHERE `id`=@id", connection);
+            MySqlCommand cmd = new MySqlCommand(@"UPDATE `schedule` SET klas = @klas, schedule_date = @schedule_date, teacher = @teacher, room = @room, subject = @subject, begin_time = @begin_time, end_time = @end_time WHERE `id`=@id", connection);
             cmd.Parameters.AddWithValue("@subject", subject ?? string.Empty);
             cmd.Parameters.AddWithValue("@klas", klas ?? string.Empty);
             if (!int.TryParse(scheduleDate, out int scheduleDateValue2)) scheduleDateValue2 = 0;
             cmd.Parameters.AddWithValue("@schedule_date", scheduleDateValue2);
+            cmd.Parameters.AddWithValue("@teacher", teacher ?? string.Empty);
+            cmd.Parameters.AddWithValue("@room", room ?? string.Empty);
             cmd.Parameters.AddWithValue("@begin_time", beginTime ?? string.Empty);
             cmd.Parameters.AddWithValue("@end_time", endTime ?? string.Empty);
             cmd.Parameters.AddWithValue("@id", MainWindow.SelectedListBox.Tag);
@@ -276,7 +277,8 @@ namespace WpfRoosterMaker
         private void SelectionChanged(object sender, RoutedEventArgs e)
         {
             ListBox listbox = sender as ListBox;
-            if (listbox.SelectedItem != null)
+            ListBoxItem item = listbox.SelectedItem as ListBoxItem;
+            if (item != null)
             {
                 SelectedListBox = (ListBoxItem)listbox.SelectedItem;
                 UpdateWindow updatewindow = new UpdateWindow();

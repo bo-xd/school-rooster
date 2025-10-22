@@ -5,12 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfRoosterMaker"
         mc:Ignorable="d"
-        Title="Update" Height="400" Width="350">
+        Title="Update Planning" Height="450" Width="350">
+    <Window.Resources>
+        <ResourceDictionary Source="Assets/Style/Style.xaml"/>
+    </Window.Resources>
     <Grid>
         <StackPanel Margin="10">
-            <Label Content="Update planning" HorizontalAlignment="Center"/>
             <Label Content="Les"/>
             <TextBox x:Name="tbLes"/>
+            <Label Content="Lokaal"/>
+            <TextBox x:Name="tbLokaal"/>
+            <Label Content="Docent"/>
+            <TextBox x:Name="tbDocent"/>
             <Label Content="Klas"/>
             <ComboBox x:Name="cbKlas" ItemsSource="{Binding}"/>
             <Label Content="From:"/>

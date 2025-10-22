@@ -50,9 +50,11 @@ namespace WpfRoosterMaker
             string klas = cbKlas.Text;
             DateTime selDate = dpFrom.SelectedDate ?? DateTime.Now;
             string fromdate = selDate.ToString("yyyyMMdd");
+            string teacher = tbDocent.Text;
+            string room = tbLokaal.Text;
             string fromtime = (cbHoursFrom.Text ?? "00").PadLeft(2, '0') + (cbMinutesFrom.Text ?? "00").PadLeft(2, '0');
             string totime = (cbHoursTo.Text ?? "00").PadLeft(2, '0') + (cbMinutesTo.Text ?? "00").PadLeft(2, '0');
-            MainWindow.Create(lesnaam, klas, fromdate, fromtime, totime);
+            MainWindow.Create(lesnaam, klas, fromdate, teacher, room, fromtime, totime);
             Console.WriteLine(lesnaam);
             Console.WriteLine(klas);
             Console.WriteLine(fromdate);

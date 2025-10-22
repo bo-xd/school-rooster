@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfRoosterMaker"
         mc:Ignorable="d"
-        Title="Roostermaker Programma" Height="450" Width="800">
+        Title="Roostermaker Programma" Height="450" Width="900">
     <Window.Resources>
         <ResourceDictionary Source="Assets/Style/Style.xaml"/>
     </Window.Resources>
@@ -23,12 +23,15 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <ComboBox x:Name="cbKlas" VerticalAlignment="Center" HorizontalAlignment="Center" SelectionChanged="cbKlas_SelectionChanged"/>
-        <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Button x:Name="btnBackward" Content="&lt;" Click="btnBackward_Click"/>
-            <DatePicker x:Name="dpWeek" SelectedDateChanged="dpWeek_SelectedDateChanged"/>
-            <Button x:Name="btnForward" Content=">" Click="btnForward_Click"/>
-        </StackPanel>
+        <WrapPanel Grid.ColumnSpan="4" HorizontalAlignment="Center">
+            <ComboBox x:Name="cbKlas" VerticalAlignment="Center" HorizontalAlignment="Center" SelectionChanged="cbKlas_SelectionChanged"/>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Button x:Name="btnBackward" Content="&lt;" Click="btnBackward_Click" FontWeight="Bold"/>
+                <DatePicker x:Name="dpWeek" SelectedDateChanged="dpWeek_SelectedDateChanged"/>
+                <Button x:Name="btnForward" Content=">" Click="btnForward_Click"  FontWeight="Bold"/>
+            </StackPanel>
+        </WrapPanel>
+        
 
         <Border BorderBrush="Black" BorderThickness="1" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="5">
         <ScrollViewer>
