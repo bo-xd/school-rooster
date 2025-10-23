@@ -10,10 +10,17 @@
 </head>
 <body>
     <div class="login-container">
-        <form method="post" action="php/authenticate.php">
-            <h1>Login</h1>
+        <div id="notification" class="notification" role="status" aria-live="polite" aria-hidden="true" aria-label="Login notification"></div>
+
+        <form method="post" action="php/authenticate.php" aria-label="Login form">
+            <h1 id="login-title">Login</h1>
+
+            <label for="username" class="sr-only">Username</label>
             <input type="text" name="username" placeholder="Username" id="username"/>
+
+            <label for="password" class="sr-only">Password</label>
             <input type="password" name="password" placeholder="Password" id="password"/>
+
             <button type="submit" id="login">Login</button>
         </form>
         <div class="register">
@@ -21,5 +28,6 @@
             <a href="register.html">Register here</a>
         </div>
     </div>
+    <script src="../rooster/index.js"></script>
 </body>
 </html>
