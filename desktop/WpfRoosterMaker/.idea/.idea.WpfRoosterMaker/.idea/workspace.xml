@@ -8,15 +8,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ee68724c-edb1-4a22-8b03-7a9b7f4c2705" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/bin/Debug/WpfRoosterMaker.exe" beforeDir="false" afterPath="$PROJECT_DIR$/bin/Debug/WpfRoosterMaker.exe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/Debug/WpfRoosterMaker.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/bin/Debug/WpfRoosterMaker.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/obj/Debug/WpfRoosterMaker.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/WpfRoosterMaker.csproj.AssemblyReference.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/obj/Debug/WpfRoosterMaker.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/WpfRoosterMaker.csproj.CoreCompileInputs.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/obj/Debug/WpfRoosterMaker.csproj.GenerateResource.cache" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/WpfRoosterMaker.csproj.GenerateResource.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/obj/Debug/WpfRoosterMaker.exe" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/WpfRoosterMaker.exe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/obj/Debug/WpfRoosterMaker.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/WpfRoosterMaker.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/obj/Debug/WpfRoosterMaker_MarkupCompile.cache" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/WpfRoosterMaker_MarkupCompile.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/obj/Debug/WpfRoosterMaker_MarkupCompile.lref" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/WpfRoosterMaker_MarkupCompile.lref" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../web/auth/php/middleware.php" beforeDir="false" afterPath="$PROJECT_DIR$/../../web/auth/php/middleware.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,6 +82,7 @@
       <workItem from="1761117018656" duration="960000" />
       <workItem from="1761118002510" duration="8000" />
       <workItem from="1761130227719" duration="187000" />
+      <workItem from="1761205581188" duration="187000" />
     </task>
     <servers />
   </component>

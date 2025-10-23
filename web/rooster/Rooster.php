@@ -61,10 +61,10 @@ $current_time = date('Hi');
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="../css/Rooster.css"/>
+    <script src="index.js" defer></script>
     <title>Rooster for <?php echo htmlspecialchars($user_klas); ?></title>
 </head>
 <body>
@@ -75,6 +75,10 @@ $current_time = date('Hi');
         </span>
     <form action="../auth/php/logout.php"> <input type="submit" value="Logout" class="logout"/>
     </form>
+
+    <div class="Darkmode">
+        <input id="Switch" type="button" value="Darkmode" />
+    </div>
 </header>
 
 <div class="Agenda">

@@ -171,6 +171,27 @@ body {
     transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
 }
 
+.Darkmode {
+    position: absolute;
+    right: 100px;
+    top: 10px;
+}
+
+.Darkmode input {
+    background-color: #34495e;
+    border: none;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+}
+
+.Darkmode input:hover {
+    background-color: #2c3e50;
+}
+
 .week-nav__btn:hover,
 .week-nav__btn:focus {
     transform: translateY(-2px);
@@ -186,6 +207,8 @@ body {
     padding: 6px 10px;
     border-radius: 8px;
 }
+
+
 
 @media (max-width: 640px) {
     .Agenda { flex-direction: column; }
