@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-if (session_status() == PHP_SESSION_NONE) {
+if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 function require_auth(string $loginPath = '../auth/login.html') {

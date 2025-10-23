@@ -3,9 +3,18 @@ session_start();
 error_reporting(E_ALL);
 require_once(__DIR__ . '/../../../server/server.php');
 
-/** @var TYPE_NAME $conn */
+/** @var mysqli $conn */
 if ($conn->connect_error) {
-    echo json_encode(['status' => 'error', 'message' => 'Database connection failed.']);
+    header("Location: ../login.html?error=dberr");
+    exit;
+}
+
+function showerror($code = 'invalid', $username = '') {
+    $location = '../login.html?error=' . urlencode($code);
+    if (!empty($username)) {
+        $location .= '&user=' . urlencode($username);
+    }
+    header("Location: " . $location);
     exit;
 }
 
@@ -13,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
     if (empty($username) || empty($password)) {
-        echo json_encode(['status' => 'error', 'message' => 'Username and password are required.']);
+        showerror('empty', $username);
         exit;
     }
 
@@ -31,12 +40,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: ../../rooster/Rooster.php");
             exit;
         } else {
-            echo json_encode(['status' => 'error', 'message' => 'Invalid username or password.']);
+            // Invalid password
+            showerror('invalid', $username);
         }
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'Invalid username or password.']);
+        // Username not found
+        showerror('invalid', $username);
     }
 } else {
-    echo json_encode(['status' => 'error', 'message' => 'Invalid request method.']);
+    // Invalid method
+    showerror('method');
 }
 ?>
