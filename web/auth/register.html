@@ -2,25 +2,46 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="css/register.css"/>
+    <link rel="stylesheet" href="css/auth.css"/>
     <title>Register</title>
 </head>
 <body>
-    <div class="register-container">
-        <form method="post" action="php/register.php">
+    <div class="register-container login-container">
+        <form method="post" action="php/register.php" aria-label="Register form">
             <h1>Register</h1>
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <input type="text" name="klas" placeholder="Klas" required>
+
+            <div class="field">
+                <img class="input-icon" src="css/img/user.svg" alt="" aria-hidden="true" />
+                <label for="username" class="sr-only">Username</label>
+                <input type="text" name="username" placeholder="Username" id="username" required />
+            </div>
+
+            <div class="field">
+                <img class="input-icon" src="css/img/lock.svg" alt="" aria-hidden="true" />
+                <label for="password" class="sr-only">Password</label>
+                <input type="password" name="password" placeholder="Password" id="password" autocomplete="current-password" required />
+                <button type="button" class="showpass" aria-label="Show password" aria-pressed="false" title="Show password">
+                    <img class="toggle-icon" src="css/img/eye.svg" alt="Show password icon" />
+                </button>
+            </div>
+
+            <div class="field">
+                <img class="input-icon" src="css/img/users.svg" alt="" aria-hidden="true" />
+                <label for="klas" class="sr-only">Klas</label>
+                <input type="text" name="klas" placeholder="Klas" id="klas" required />
+            </div>
+
             <button type="submit" id="register">Register</button>
         </form>
+
         <div class="login">
             <p>Already have an account?</p>
             <a href="login.html">Login here</a>
         </div>
     </div>
+
+    <script src="js/showpassword.js"></script>
 </body>
 </html>

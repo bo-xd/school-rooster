@@ -2,10 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="css/login.css"/>
+    <link rel="stylesheet" href="css/auth.css"/>
     <title>Login</title>
 </head>
 <body>
@@ -15,11 +14,20 @@
         <form method="post" action="php/authenticate.php" aria-label="Login form">
             <h1 id="login-title">Login</h1>
 
-            <label for="username" class="sr-only">Username</label>
-            <input type="text" name="username" placeholder="Username" id="username"/>
+            <div class="field">
+                <img class="input-icon" src="css/img/user.svg" alt="" aria-hidden="true" />
+                <label for="username" class="sr-only">Username</label>
+                <input type="text" name="username" placeholder="Username" id="username" autocomplete="username" required />
+            </div>
 
-            <label for="password" class="sr-only">Password</label>
-            <input type="password" name="password" placeholder="Password" id="password"/>
+            <div class="field">
+                <img class="input-icon" src="css/img/lock.svg" alt="" aria-hidden="true" />
+                <label for="password" class="sr-only">Password</label>
+                <input type="password" name="password" placeholder="Password" id="password" autocomplete="current-password" required />
+                <button type="button" class="showpass" aria-label="Show password" aria-pressed="false" title="Show password">
+                    <img class="toggle-icon" src="css/img/eye.svg" alt="Show password icon" />
+                </button>
+            </div>
 
             <button type="submit" id="login">Login</button>
         </form>
@@ -28,6 +36,8 @@
             <a href="register.html">Register here</a>
         </div>
     </div>
+
+    <script src="js/showpassword.js"></script>
     <script src="js/autherror.js"></script>
 </body>
 </html>
