@@ -81,7 +81,7 @@ $current_time = date('Hi');
     </div>
 </header>
 
-<div class="Agenda">
+<div class="Agenda" >
 
     <div class="Maandag">
         <h4 class="DateMaandag"><?php echo $monday_display; ?><br>Maandag</h4>

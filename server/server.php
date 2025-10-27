@@ -14,7 +14,7 @@ $conn->select_db($dbname);
 
 $createTableSql = "CREATE TABLE IF NOT EXISTS schedule (
     id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    klas VARCHAR(10) NOT NULL,
+    room VARCHAR(10) NOT NULL,
     schedule_date INT(10) NOT NULL,
     subject VARCHAR(100) NOT NULL,
     teacher VARCHAR(10) NOT NULL,
@@ -23,6 +23,17 @@ $createTableSql = "CREATE TABLE IF NOT EXISTS schedule (
     end_time VARCHAR(4) NOT NULL
 )";
 
+$createTableSql = "CREATE TABLE IF NOT EXISTS teacher (
+   teacher VARCHAR(10) NOT NULL 
+)";
+
+$createTableSql = "CREATE TABLE IF NOT EXISTS subject (
+    subject VARCHAR(100) NOT NULL
+)";
+
+$createTableSql = "CREATE TABLE IF NOT EXISTS room (
+    room VARCHAR(10)  NOT NULL 
+)";
 if ($conn->query($createTableSql) === FALSE) {
     die("Error creating table: " . $conn->error);
 }

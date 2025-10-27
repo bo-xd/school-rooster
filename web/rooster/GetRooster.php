@@ -9,13 +9,13 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     exit;
 }
 
-$user_klas = $_SESSION['klas'];
+$user_room = $_SESSION['room'];
 
 $rooster_data = [ 1 => [], 2 => [], 3 => [], 4 => [], 5 => [] ];
 
 /** @var TYPE_NAME $conn */
-$stmt = $conn->prepare("SELECT day_of_week, subject, teacher, room, begin_time, end_time FROM schedule WHERE klas = ? ORDER BY time");
-$stmt->bind_param("s", $user_klas);
+$stmt = $conn->prepare("SELECT day_of_week, subject, teacher, room, begin_time, end_time FROM schedule WHERE room = ? ORDER BY time");
+$stmt->bind_param("s", $user_room);
 $stmt->execute();
 $result = $stmt->get_result();
 

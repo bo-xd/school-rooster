@@ -208,8 +208,6 @@ body {
     border-radius: 8px;
 }
 
-
-
 @media (max-width: 640px) {
     .Agenda { flex-direction: column; }
     .week-nav { margin-top: 100px; gap: 8px; }
