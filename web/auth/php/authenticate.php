@@ -35,8 +35,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (password_verify($password, $row['password'])) {
             $_SESSION['loggedin'] = true;
             $_SESSION['username'] = $row['username'];
-            $_SESSION['klas'] = $row['klas'];
 
+            if ($row['username'] === 'admin') {
+                header("Location: ../../admin/Panel.php");
+                exit;
+            }
+
+            $_SESSION['klas'] = $row['klas'];
             header("Location: ../../rooster/Rooster.php");
             exit;
         } else {
