@@ -3,7 +3,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once(__DIR__ . '/../auth/php/middleware.php');
+require_once(__DIR__ . '/../../auth/php/middleware.php');
 require_auth();
 
 $db = mysqli_connect("localhost", "root", "", "DBAgenda");
@@ -58,6 +58,6 @@ while ($user = mysqli_fetch_assoc($users)) {
         </tbody>
     </table>
 
-    <p><a href="Panel.php">Back to Panel</a></p>
+    <p><a href="../Panel.php">Back to Panel</a></p>
 </body>
 </html>
