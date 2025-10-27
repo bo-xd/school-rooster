@@ -23,11 +23,11 @@ $wednesday_sql_date = date("Y-m-d", $wednesday_ts);
 $thursday_sql_date = date("Y-m-d", $thursday_ts);
 $friday_sql_date = date("Y-m-d", $friday_ts);
 
-$monday_display = date("n/j/y", $monday_ts);
-$tuesday_display = date("n/j/y", $tuesday_ts);
-$wednesday_display = date("n/j/y", $wednesday_ts);
-$thursday_display = date("n/j/y", $thursday_ts);
-$friday_display = date("n/j/y", $friday_ts);
+$monday_display = date("j/n/y", $monday_ts);
+$tuesday_display = date("j/n/y", $tuesday_ts);
+$wednesday_display = date("j/n/y", $wednesday_ts);
+$thursday_display = date("j/n/y", $thursday_ts);
+$friday_display = date("j/n/y", $friday_ts);
 
 $prev_week = $week_offset - 1;
 $next_week = $week_offset + 1;
