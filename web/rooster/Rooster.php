@@ -41,7 +41,8 @@ $sql = "SELECT schedule_date, subject, teacher, room, begin_time, end_time
     WHERE klas = ? AND schedule_date BETWEEN ? AND ?
     ORDER BY schedule_date, begin_time, end_time";
 
-/** @var TYPE_NAME $conn */
+/** @var mysqli $conn */
+$conn = isset($conn) ? $conn : get_db_connection();
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("sss", $user_klas, $monday_sql_date, $friday_sql_date);
 $stmt->execute();
@@ -51,7 +52,7 @@ while ($row = $result->fetch_assoc()) {
     $rooster_data[$row['schedule_date']][] = $row;
 }
 $stmt->close();
-$conn->close();
+// Do not close the global connection here; server.php provides a shared connection
 
 date_default_timezone_set('Europe/Rome');
 $current_day = strtolower(date('l'));
