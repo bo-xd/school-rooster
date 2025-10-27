@@ -63,8 +63,8 @@ $current_time = date('Hi');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="../css/Rooster.css"/>
-    <script src="index.js" defer></script>
+    <link rel="stylesheet" href="css/Rooster.css"/>
+    <script src="js/darkmode.js" defer></script>
     <title>Rooster for <?php echo htmlspecialchars($user_klas); ?></title>
 </head>
 <body>
