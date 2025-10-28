@@ -4,6 +4,8 @@ error_reporting(E_ALL);
 require_once(__DIR__ . '/../../../server/server.php');
 
 /** @var mysqli $conn */
+$conn = get_db_connection();
+
 if ($conn->connect_error) {
     header("Location: ../login.html?error=dberr");
     exit;

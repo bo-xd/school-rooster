@@ -13,7 +13,8 @@ $user_room = $_SESSION['room'];
 
 $rooster_data = [ 1 => [], 2 => [], 3 => [], 4 => [], 5 => [] ];
 
-/** @var TYPE_NAME $conn */
+/** @var mysqli $conn */
+$conn = isset($conn) ? $conn : get_db_connection();
 $stmt = $conn->prepare("SELECT day_of_week, subject, teacher, room, begin_time, end_time FROM schedule WHERE room = ? ORDER BY time");
 $stmt->bind_param("s", $user_room);
 $stmt->execute();
@@ -23,7 +24,7 @@ while ($row = $result->fetch_assoc()) {
     $rooster_data[$row['day_of_week']][] = $row;
 }
 $stmt->close();
-$conn->close();
+
 
 echo json_encode(['status' => 'success', 'data' => $rooster_data]);
 ?>
