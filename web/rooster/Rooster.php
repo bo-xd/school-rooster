@@ -5,6 +5,8 @@ error_reporting(E_ALL);
 
 require_once(__DIR__ . '../../auth/php/middleware.php');
 require_auth();
+require_once(__DIR__ . '/../utils/authUtil.php');
+$csrf = generate_csrf_token();
 
 $user_klas = $_SESSION['klas'];
 
@@ -74,7 +76,7 @@ $current_time = date('Hi');
             Ingelogd als: <?php echo htmlspecialchars($_SESSION['username']); ?>
             (Klas: <?php echo htmlspecialchars($user_klas); ?>)
         </span>
-    <form action="../auth/php/logout.php"> <input type="submit" value="Logout" class="logout"/>
+    <form action="../auth/php/logout.php" method="post"> <input type="hidden" name="csrf" value="<?php echo htmlspecialchars($csrf); ?>" /> <input type="submit" value="Logout" class="logout"/>
     </form>
 
     <div class="Darkmode">
