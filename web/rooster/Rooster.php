@@ -52,6 +52,7 @@ while ($row = $result->fetch_assoc()) {
     $rooster_data[$row['schedule_date']][] = $row;
 }
 $stmt->close();
+// Do not close the global connection here; server.php provides a shared connection
 
 date_default_timezone_set('Europe/Rome');
 $current_day = strtolower(date('l'));

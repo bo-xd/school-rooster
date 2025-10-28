@@ -1,7 +1,12 @@
 <?php
-session_start();
 error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('session.use_strict_mode', 1);
 require_once(__DIR__ . '/../../../server/server.php');
+require_once(__DIR__ . '/../../utils/authUtil.php');
+
+start_session();
+
 
 /** @var mysqli $conn */
 $conn = get_db_connection();
@@ -37,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (password_verify($password, $row['password'])) {
             $_SESSION['loggedin'] = true;
             $_SESSION['username'] = $row['username'];
+            generate_session_id();
 
             if ($row['username'] === 'admin') {
                 header("Location: ../../admin/Panel.php");

@@ -1,5 +1,7 @@
 <?php
-session_start();
+require_once(__DIR__ . '/../../utils/authUtil.php');
+start_session();
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);

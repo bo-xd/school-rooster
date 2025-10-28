@@ -17,14 +17,12 @@ $users = mysqli_query($db, "SELECT * FROM `users`");
 <head>
     <meta charset="utf-8">
     <title>Manage Users</title>
-    <style>
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #ddd; padding: 8px; }
-        th { background: #f4f4f4; }
-        form.inline { display: inline; }
-    </style>
+    <link rel="stylesheet" href="../css/users.css">
 </head>
 <body>
+    <div class="navbar">
+        <form action="../../auth/php/logout.php"> <input type="submit" value="Logout" class="logout"/>
+    </div>
     <h1>Manage Users</h1>
     <table>
         <thead>
