@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once(__DIR__ . '/../../server/server.php');
 
 header('Content-Type: application/json');

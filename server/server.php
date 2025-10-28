@@ -4,40 +4,24 @@ $username = "root";
 $password = "";
 $dbname = "DBAgenda";
 
-/**
- * Return a persistent mysqli connection (singleton). Creates database and tables if needed.
- * Use $conn = get_db_connection(); in including scripts, or rely on the global $conn set below.
- *
- * @return mysqli
- */
 function get_db_connection() {
     global $servername, $username, $password, $dbname;
 
-    // If a connection already exists and is valid, return it
-    if (isset($GLOBALS['conn']) && $GLOBALS['conn'] instanceof mysqli && $GLOBALS['conn']->ping()) {
-        return $GLOBALS['conn'];
-    }
-
-    // Create connection without specifying database so we can create it if missing
     $conn = new mysqli($servername, $username, $password);
 
     if ($conn->connect_error) {
-        // Use a clear error for web pages to handle
         die("Connection failed: " . $conn->connect_error);
     }
 
-    // Create database if it doesn't exist
     $createDbSql = "CREATE DATABASE IF NOT EXISTS `$dbname`";
     if ($conn->query($createDbSql) === FALSE) {
         die("Error creating database: " . $conn->error);
     }
 
-    // Select the database
     if (!$conn->select_db($dbname)) {
         die("Error selecting database $dbname: " . $conn->error);
     }
 
-    // Create tables (run each CREATE TABLE separately)
     $createScheduleTable = "CREATE TABLE IF NOT EXISTS schedule (
         id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         room VARCHAR(10) NOT NULL,
@@ -53,16 +37,12 @@ function get_db_connection() {
         die("Error creating schedule table: " . $conn->error);
     }
 
-    // Ensure 'klas' exists (some installations may have an older schedule table without this column)
-    // Robust check using INFORMATION_SCHEMA to avoid relying on ALTER ... IF NOT EXISTS support
     $dbEsc = $conn->real_escape_string($dbname);
     $colCheckSql = "SELECT COUNT(*) AS cnt FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='" . $dbEsc . "' AND TABLE_NAME='schedule' AND COLUMN_NAME='klas'";
     $colRes = $conn->query($colCheckSql);
     if ($colRes === FALSE) {
-        // If information_schema query fails, try a SHOW COLUMNS fallback
         $colRes = $conn->query("SHOW COLUMNS FROM schedule LIKE 'klas'");
         if ($colRes === FALSE) {
-            // Give up with a helpful error
             die("Error checking for 'klas' column: " . $conn->error);
         }
         $hasKlas = ($colRes->num_rows > 0);
@@ -98,7 +78,6 @@ function get_db_connection() {
         die("Error creating room table: " . $conn->error);
     }
 
-    // Users table used by auth
     $createUsersTable = "CREATE TABLE IF NOT EXISTS users (
         id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         username VARCHAR(100) NOT NULL UNIQUE,
@@ -109,16 +88,13 @@ function get_db_connection() {
         die("Error creating users table: " . $conn->error);
     }
 
-    // Store in global so subsequent includes reuse the same mysqli object
     $GLOBALS['conn'] = $conn;
 
     return $conn;
 }
 
-// Initialize a global $conn variable for backward compatibility
 if (!isset($conn) || !($conn instanceof mysqli) || !@$conn->ping()) {
     $conn = get_db_connection();
 }
 
-// Note: Do NOT close $conn here. Closing should be the responsibility of the script that opened/owns it.
 ?>

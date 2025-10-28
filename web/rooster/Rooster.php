@@ -274,7 +274,7 @@ $current_time = date('Hi');
     <a class="week-nav__btn" href="?week=<?php echo $prev_week; ?>" aria-label="Vorige week">‹</a>
     <div class="week-nav__label">Week <?php echo htmlspecialchars($week); ?></div>
     <a class="week-nav__btn" href="?week=<?php echo $next_week; ?>" aria-label="Volgende week">›</a>
-    <a class="week-huidigeweek" href="?week=0">huidige week</a>
+    <a class="week-huidigeweek" href="?week=0">ga naar huidige week</a>
 </nav>
 
 </body>
