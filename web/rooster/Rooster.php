@@ -27,8 +27,8 @@ $monday_display = date("j/n/y", $monday_ts);
 $tuesday_display = date("j/n/y", $tuesday_ts);
 $wednesday_display = date("j/n/y", $wednesday_ts);
 $thursday_display = date("j/n/y", $thursday_ts);
-$friday_display = date("/n/y", $friday_ts);
-
+$friday_display = date("j/n/y", $friday_ts);
+$week = date("W", $monday_ts);
 $prev_week = $week_offset - 1;
 $next_week = $week_offset + 1;
 
@@ -52,7 +52,7 @@ while ($row = $result->fetch_assoc()) {
     $rooster_data[$row['schedule_date']][] = $row;
 }
 $stmt->close();
-// Do not close the global connection here; server.php provides a shared connection
+
 
 date_default_timezone_set('Europe/Rome');
 $current_day = strtolower(date('l'));
@@ -84,7 +84,7 @@ $current_time = date('Hi');
 
 <div class="Agenda" >
 
-    <div class="Maandag">
+    <div class="Maandag<?php if ($week_offset === 0 && $current_day === 'monday') echo ' today'; ?>">
         <h4 class="DateMaandag"><?php echo $monday_display; ?><br>Maandag</h4>
         <ul class="TasksMaandag">
             <?php if (empty($rooster_data[$monday_sql_date])): ?>
@@ -121,7 +121,7 @@ $current_time = date('Hi');
         </ul>
     </div>
 
-    <div class="Dinsdag">
+    <div class="Dinsdag<?php if ($week_offset === 0 && $current_day === 'tuesday') echo ' today'; ?>">
         <h4 class="DateDinsdag"><?php echo $tuesday_display; ?><br>Dinsdag</h4>
         <ul class="TasksDinsdag">
             <?php if (empty($rooster_data[$tuesday_sql_date])): ?>
@@ -158,7 +158,7 @@ $current_time = date('Hi');
         </ul>
     </div>
 
-    <div class="Woensdag">
+    <div class="Woensdag<?php if ($week_offset === 0 && $current_day === 'wednesday') echo ' today'; ?>">
         <h4 class="DateWoensdag"><?php echo $wednesday_display; ?><br>Woensdag</h4>
         <ul class="TasksWoensdag">
             <?php if (empty($rooster_data[$wednesday_sql_date])): ?>
@@ -195,7 +195,7 @@ $current_time = date('Hi');
         </ul>
     </div>
 
-    <div class="Donderdag">
+    <div class="Donderdag<?php if ($week_offset === 0 && $current_day === 'thursday') echo ' today'; ?>">
         <h4 class="DateDonderdag"><?php echo $thursday_display; ?><br>Donderdag</h4>
         <ul class="TasksDonderdag">
             <?php if (empty($rooster_data[$thursday_sql_date])): ?>
@@ -232,7 +232,7 @@ $current_time = date('Hi');
         </ul>
     </div>
 
-    <div class="Vrijdag">
+    <div class="Vrijdag<?php if ($week_offset === 0 && $current_day === 'friday') echo ' today'; ?>">
         <h4 class="DateVrijdag"><?php echo $friday_display; ?><br>Vrijdag</h4>
         <ul class="TasksVrijdag">
             <?php if (empty($rooster_data[$friday_sql_date])): ?>
@@ -272,8 +272,9 @@ $current_time = date('Hi');
 
 <nav class="week-nav" aria-label="Week navigation">
     <a class="week-nav__btn" href="?week=<?php echo $prev_week; ?>" aria-label="Vorige week">‹</a>
-    <div class="week-nav__label">Week van <?php echo htmlspecialchars($monday_display); ?></div>
+    <div class="week-nav__label">Week <?php echo htmlspecialchars($week); ?></div>
     <a class="week-nav__btn" href="?week=<?php echo $next_week; ?>" aria-label="Volgende week">›</a>
+    <a class="week-huidigeweek" href="?week=0">huidige week</a>
 </nav>
 
 </body>

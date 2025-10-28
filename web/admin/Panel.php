@@ -22,8 +22,8 @@ require_auth();
         <nav>
             <ul>
                 <li><a href="users/manage_users.php">Manage Users</a></li>
-                <li><a href="users/manage_teachers.php">Manager Teachers</a></li>
-                <li><a href="rooster/rooster.php">Manager Rooster</a></li>
+                <li><a href="users/manage_teachers.php">Manage Teachers</a></li>
+                <li><a href="rooster/rooster.php">Manage Rooster</a></li>
             </ul>
         </nav>
     </div>
