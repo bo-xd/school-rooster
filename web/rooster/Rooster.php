@@ -27,7 +27,7 @@ $monday_display = date("j/n/y", $monday_ts);
 $tuesday_display = date("j/n/y", $tuesday_ts);
 $wednesday_display = date("j/n/y", $wednesday_ts);
 $thursday_display = date("j/n/y", $thursday_ts);
-$friday_display = date("j/n/y", $friday_ts);
+$friday_display = date("/n/y", $friday_ts);
 
 $prev_week = $week_offset - 1;
 $next_week = $week_offset + 1;
