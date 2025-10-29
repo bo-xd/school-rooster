@@ -3,36 +3,40 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once(__DIR__ . '../../utils/DateUtil.php');
 require_once(__DIR__ . '../../auth/php/middleware.php');
-require_once(__DIR__ . '/../utils/authUtil.php');
-
 require_auth();
+require_once(__DIR__ . '/../utils/authUtil.php');
 $csrf = generate_csrf_token();
 
-date_default_timezone_set(date_default_timezone_get());
-$week_offset = isset($_GET['week']) ? (int)$_GET['week'] : 0;
+$user_klas = $_SESSION['klas'];
+
+$week_offset = isset($_GET['week']) ? intval($_GET['week']) : 0;
 
 $base_monday = strtotime('monday this week');
-$offset_monday = strtotime(sprintf('%+d week', $week_offset), $base_monday);
+$monday_ts = strtotime("{$week_offset} weeks", $base_monday);
+$tuesday_ts = strtotime('+1 day', $monday_ts);
+$wednesday_ts = strtotime('+2 days', $monday_ts);
+$thursday_ts = strtotime('+3 days', $monday_ts);
+$friday_ts = strtotime('+4 days', $monday_ts);
 
-$monday = date('d/m/Y', $offset_monday);
-$tuesday = date('d/m/Y', strtotime('+1 day', $offset_monday));
-$wednesday = date('d/m/Y', strtotime('+2 days', $offset_monday));
-$thursday = date('d/m/Y', strtotime('+3 days', $offset_monday));
-$friday = date('d/m/Y', strtotime('+4 days', $offset_monday));
-$current_day = date('d/m/Y');
-$current_time = date('H:i');
-$monday_offset = $offset_monday;
+$monday_sql_date = date("Y-m-d", $monday_ts);
+$tuesday_sql_date = date("Y-m-d", $tuesday_ts);
+$wednesday_sql_date = date("Y-m-d", $wednesday_ts);
+$thursday_sql_date = date("Y-m-d", $thursday_ts);
+$friday_sql_date = date("Y-m-d", $friday_ts);
 
-$user_klas = $_SESSION['klas'];
+$monday_display = date("j/n/y", $monday_ts);
+$tuesday_display = date("j/n/y", $tuesday_ts);
+$wednesday_display = date("j/n/y", $wednesday_ts);
+$thursday_display = date("j/n/y", $thursday_ts);
+$friday_display = date("j/n/y", $friday_ts);
+$week = date("W", $monday_ts);
+$prev_week = $week_offset - 1;
+$next_week = $week_offset + 1;
 
 require_once(__DIR__ . '/../../server/server.php');
 
 $rooster_data = [];
-
-$start_sql = displayDateToSql($monday);
-$end_sql = displayDateToSql($friday);
 
 $sql = "SELECT schedule_date, subject, teacher, room, begin_time, end_time
     FROM schedule
@@ -42,17 +46,19 @@ $sql = "SELECT schedule_date, subject, teacher, room, begin_time, end_time
 /** @var mysqli $conn */
 $conn = isset($conn) ? $conn : get_db_connection();
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("sss", $user_klas, $start_sql, $end_sql);
+$stmt->bind_param("sss", $user_klas, $monday_sql_date, $friday_sql_date);
 $stmt->execute();
 $result = $stmt->get_result();
 
 while ($row = $result->fetch_assoc()) {
-    $display_date = sqlDateToDisplay($row['schedule_date']);
-    $row['schedule_date_display'] = $display_date;
-    $rooster_data[$display_date][] = $row;
+    $rooster_data[$row['schedule_date']][] = $row;
 }
 $stmt->close();
 
+
+date_default_timezone_set('Europe/Rome');
+$current_day = strtolower(date('l'));
+$current_time = date('Hi');
 ?>
 <!doctype html>
 <html lang="en">
@@ -80,20 +86,20 @@ $stmt->close();
 
 <div class="Agenda" >
 
-    <div class="Maandag<?php if ($current_day === $monday) echo ' today'; ?>">
-        <h4 class="DateMaandag"><?php echo $monday; ?><br>Maandag</h4>
+    <div class="Maandag<?php if ($week_offset === 0 && $current_day === 'monday') echo ' today'; ?>">
+        <h4 class="DateMaandag"><?php echo $monday_display; ?><br>Maandag</h4>
         <ul class="TasksMaandag">
-            <?php if (empty($rooster_data[$monday])): ?>
+            <?php if (empty($rooster_data[$monday_sql_date])): ?>
                 <li class="schedule-item">Geen lessen</li>
             <?php else: ?>
-                <?php foreach ($rooster_data[$monday] as $item): ?>
+                <?php foreach ($rooster_data[$monday_sql_date] as $item): ?>
                     <?php
                         $bt_raw = $item['begin_time'];
                         $et_raw = $item['end_time'];
                         $bt = str_pad($bt_raw, 4, '0', STR_PAD_LEFT);
                         $et = str_pad($et_raw, 4, '0', STR_PAD_LEFT);
 
-                        $is_current = ($current_day === $monday && $current_time >= $bt && $current_time < $et);
+                        $is_current = ($week_offset === 0 && $current_day === 'monday' && $current_time >= $bt && $current_time < $et);
                     ?>
                     <li class="schedule-item<?php if ($is_current) echo ' current-lesson'; ?>">
                         <div class="subject"><?php echo htmlspecialchars($item['subject']); ?></div>
@@ -117,20 +123,20 @@ $stmt->close();
         </ul>
     </div>
 
-    <div class="Dinsdag<?php if ($current_day === $tuesday) echo ' today'; ?>">
-        <h4 class="DateDinsdag"><?php echo $tuesday; ?><br>Dinsdag</h4>
+    <div class="Dinsdag<?php if ($week_offset === 0 && $current_day === 'tuesday') echo ' today'; ?>">
+        <h4 class="DateDinsdag"><?php echo $tuesday_display; ?><br>Dinsdag</h4>
         <ul class="TasksDinsdag">
-            <?php if (empty($rooster_data[$tuesday])): ?>
+            <?php if (empty($rooster_data[$tuesday_sql_date])): ?>
                 <li class="schedule-item">Geen lessen</li>
             <?php else: ?>
-                <?php foreach ($rooster_data[$tuesday] as $item): ?>
+                <?php foreach ($rooster_data[$tuesday_sql_date] as $item): ?>
                     <?php
                         $bt_raw = $item['begin_time'];
                         $et_raw = $item['end_time'];
                         $bt = str_pad($bt_raw, 4, '0', STR_PAD_LEFT);
                         $et = str_pad($et_raw, 4, '0', STR_PAD_LEFT);
 
-                        $is_current = ($current_day === $tuesday && $current_time >= $bt && $current_time < $et);
+                        $is_current = ($week_offset === 0 && $current_day === 'tuesday' && $current_time >= $bt && $current_time < $et);
                     ?>
                     <li class="schedule-item<?php if ($is_current) echo ' current-lesson'; ?>">
                         <div class="subject"><?php echo htmlspecialchars($item['subject']); ?></div>
@@ -154,20 +160,20 @@ $stmt->close();
         </ul>
     </div>
 
-    <div class="Woensdag<?php if ($current_day === $wednesday) echo ' today'; ?>">
-        <h4 class="DateWoensdag"><?php echo $wednesday; ?><br>Woensdag</h4>
+    <div class="Woensdag<?php if ($week_offset === 0 && $current_day === 'wednesday') echo ' today'; ?>">
+        <h4 class="DateWoensdag"><?php echo $wednesday_display; ?><br>Woensdag</h4>
         <ul class="TasksWoensdag">
-            <?php if (empty($rooster_data[$wednesday])): ?>
+            <?php if (empty($rooster_data[$wednesday_sql_date])): ?>
                 <li class="schedule-item">Geen lessen</li>
             <?php else: ?>
-                <?php foreach ($rooster_data[$wednesday] as $item): ?>
+                <?php foreach ($rooster_data[$wednesday_sql_date] as $item): ?>
                     <?php
                         $bt_raw = $item['begin_time'];
                         $et_raw = $item['end_time'];
                         $bt = str_pad($bt_raw, 4, '0', STR_PAD_LEFT);
                         $et = str_pad($et_raw, 4, '0', STR_PAD_LEFT);
 
-                        $is_current = ($current_day === $wednesday && $current_time >= $bt && $current_time < $et);
+                        $is_current = ($week_offset === 0 && $current_day === 'wednesday' && $current_time >= $bt && $current_time < $et);
                     ?>
                     <li class="schedule-item<?php if ($is_current) echo ' current-lesson'; ?>">
                         <div class="subject"><?php echo htmlspecialchars($item['subject']); ?></div>
@@ -191,20 +197,20 @@ $stmt->close();
         </ul>
     </div>
 
-    <div class="Donderdag<?php if ($current_day === $thursday) echo ' today'; ?>">
-        <h4 class="DateDonderdag"><?php echo $thursday; ?><br>Donderdag</h4>
+    <div class="Donderdag<?php if ($week_offset === 0 && $current_day === 'thursday') echo ' today'; ?>">
+        <h4 class="DateDonderdag"><?php echo $thursday_display; ?><br>Donderdag</h4>
         <ul class="TasksDonderdag">
-            <?php if (empty($rooster_data[$thursday])): ?>
+            <?php if (empty($rooster_data[$thursday_sql_date])): ?>
                 <li class="schedule-item">Geen lessen</li>
             <?php else: ?>
-                <?php foreach ($rooster_data[$thursday] as $item): ?>
+                <?php foreach ($rooster_data[$thursday_sql_date] as $item): ?>
                     <?php
                         $bt_raw = $item['begin_time'];
                         $et_raw = $item['end_time'];
                         $bt = str_pad($bt_raw, 4, '0', STR_PAD_LEFT);
                         $et = str_pad($et_raw, 4, '0', STR_PAD_LEFT);
 
-                        $is_current = ($current_day === $thursday && $current_time >= $bt && $current_time < $et);
+                        $is_current = ($week_offset === 0 && $current_day === 'thursday' && $current_time >= $bt && $current_time < $et);
                     ?>
                     <li class="schedule-item<?php if ($is_current) echo ' current-lesson'; ?>">
                         <div class="subject"><?php echo htmlspecialchars($item['subject']); ?></div>
@@ -228,20 +234,20 @@ $stmt->close();
         </ul>
     </div>
 
-    <div class="Vrijdag<?php if ($current_day === $friday) echo ' today'; ?>">
-        <h4 class="DateVrijdag"><?php echo $friday; ?><br>Vrijdag</h4>
+    <div class="Vrijdag<?php if ($week_offset === 0 && $current_day === 'friday') echo ' today'; ?>">
+        <h4 class="DateVrijdag"><?php echo $friday_display; ?><br>Vrijdag</h4>
         <ul class="TasksVrijdag">
-            <?php if (empty($rooster_data[$friday])): ?>
+            <?php if (empty($rooster_data[$friday_sql_date])): ?>
                 <li class="schedule-item">Geen lessen</li>
             <?php else: ?>
-                <?php foreach ($rooster_data[$friday] as $item): ?>
+                <?php foreach ($rooster_data[$friday_sql_date] as $item): ?>
                     <?php
                         $bt_raw = $item['begin_time'];
                         $et_raw = $item['end_time'];
                         $bt = str_pad($bt_raw, 4, '0', STR_PAD_LEFT);
                         $et = str_pad($et_raw, 4, '0', STR_PAD_LEFT);
 
-                        $is_current = ($current_day === $friday && $current_time >= $bt && $current_time < $et);
+                        $is_current = ($week_offset === 0 && $current_day === 'friday' && $current_time >= $bt && $current_time < $et);
                     ?>
                     <li class="schedule-item<?php if ($is_current) echo ' current-lesson'; ?>">
                         <div class="subject"><?php echo htmlspecialchars($item['subject']); ?></div>
@@ -267,12 +273,11 @@ $stmt->close();
 </div>
 
 <nav class="week-nav" aria-label="Week navigation">
-    <a class="week-nav__btn" href="?week=<?php echo $week_offset - 1; ?>" aria-label="Vorige week">‹</a>
-    <div class="week-nav__label">Week <?php echo date('W', $monday_offset); ?></div>
-    <a class="week-nav__btn" href="?week=<?php echo $week_offset + 1; ?>" aria-label="Volgende week">›</a>
+    <a class="week-nav__btn" href="?week=<?php echo $prev_week; ?>" aria-label="Vorige week">‹</a>
+    <div class="week-nav__label">Week <?php echo htmlspecialchars($week); ?></div>
+    <a class="week-nav__btn" href="?week=<?php echo $next_week; ?>" aria-label="Volgende week">›</a>
     <a class="week-huidigeweek" href="?week=0">ga naar huidige week</a>
 </nav>
 
 </body>
 </html>
-
