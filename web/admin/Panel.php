@@ -1,6 +1,7 @@
 <?php
 require_once(__DIR__ . '/../auth/php/middleware.php');
 require_auth();
+$csrf = generate_csrf_token();
 ?>
 
 <!doctype html>
@@ -15,7 +16,7 @@ require_auth();
 </head>
 <body>
     <div class="navbar">
-        <form action="../auth/php/logout.php"> <input type="submit" value="Logout" class="logout"/>
+        <form action="../auth/php/logout.php" method="post"> <input type="hidden" name="csrf" value="<?php echo htmlspecialchars($csrf); ?>" /> <input type="submit" value="Logout" class="logout"/>
     </div>
     <div class="admin-panel">
         <h1>Admin Panel</h1>

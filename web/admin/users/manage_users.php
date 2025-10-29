@@ -5,6 +5,7 @@ error_reporting(E_ALL);
 
 require_once(__DIR__ . '/../../auth/php/middleware.php');
 require_auth();
+$csrf = generate_csrf_token();
 
 $db = mysqli_connect("localhost", "root", "", "DBAgenda");
 if (!$db) {
@@ -21,7 +22,7 @@ $users = mysqli_query($db, "SELECT * FROM `users`");
 </head>
 <body>
     <div class="navbar">
-        <form action="../../auth/php/logout.php"> <input type="submit" value="Logout" class="logout"/>
+        <form action="../../auth/php/logout.php" method="post"> <input type="hidden" name="csrf" value="<?php echo htmlspecialchars($csrf); ?>" /> <input type="submit" value="Logout" class="logout"/>
     </div>
     <h1>Manage Users</h1>
     <table>
