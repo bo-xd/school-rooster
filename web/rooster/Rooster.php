@@ -6,38 +6,63 @@ error_reporting(E_ALL);
 require_once(__DIR__ . '../../auth/php/middleware.php');
 require_auth();
 require_once(__DIR__ . '/../utils/authUtil.php');
+require_once(__DIR__ . '/../utils/DateUtil.php');
 $csrf = generate_csrf_token();
 
 $user_klas = $_SESSION['klas'];
-
 $week_offset = isset($_GET['week']) ? intval($_GET['week']) : 0;
 
-$base_monday = strtotime('monday this week');
-$monday_ts = strtotime("{$week_offset} weeks", $base_monday);
-$tuesday_ts = strtotime('+1 day', $monday_ts);
-$wednesday_ts = strtotime('+2 days', $monday_ts);
-$thursday_ts = strtotime('+3 days', $monday_ts);
-$friday_ts = strtotime('+4 days', $monday_ts);
+$week_dates = getWeekDates($week_offset);
 
-$monday_sql_date = date("Y-m-d", $monday_ts);
-$tuesday_sql_date = date("Y-m-d", $tuesday_ts);
-$wednesday_sql_date = date("Y-m-d", $wednesday_ts);
-$thursday_sql_date = date("Y-m-d", $thursday_ts);
-$friday_sql_date = date("Y-m-d", $friday_ts);
+$days = [
+    'monday' => [
+        'ts' => $week_dates['monday_ts'],
+        'sql_date' => date('Y-m-d', $week_dates['monday_ts']),
+        'display' => date('j/n/y', $week_dates['monday_ts']),
+        'display_full' => date('d/m/Y', $week_dates['monday_ts']),
+        'name' => 'Maandag'
+    ],
+    'tuesday' => [
+        'ts' => $week_dates['tuesday_ts'],
+        'sql_date' => date('Y-m-d', $week_dates['tuesday_ts']),
+        'display' => date('j/n/y', $week_dates['tuesday_ts']),
+        'display_full' => date('d/m/Y', $week_dates['tuesday_ts']),
+        'name' => 'Dinsdag'
+    ],
+    'wednesday' => [
+        'ts' => $week_dates['wednesday_ts'],
+        'sql_date' => date('Y-m-d', $week_dates['wednesday_ts']),
+        'display' => date('j/n/y', $week_dates['wednesday_ts']),
+        'display_full' => date('d/m/Y', $week_dates['wednesday_ts']),
+        'name' => 'Woensdag'
+    ],
+    'thursday' => [
+        'ts' => $week_dates['thursday_ts'],
+        'sql_date' => date('Y-m-d', $week_dates['thursday_ts']),
+        'display' => date('j/n/y', $week_dates['thursday_ts']),
+        'display_full' => date('d/m/Y', $week_dates['thursday_ts']),
+        'name' => 'Donderdag'
+    ],
+    'friday' => [
+        'ts' => $week_dates['friday_ts'],
+        'sql_date' => date('Y-m-d', $week_dates['friday_ts']),
+        'display' => date('j/n/y', $week_dates['friday_ts']),
+        'display_full' => date('d/m/Y', $week_dates['friday_ts']),
+        'name' => 'Vrijdag'
+    ]
+];
 
-$monday_display = date("j/n/y", $monday_ts);
-$tuesday_display = date("j/n/y", $tuesday_ts);
-$wednesday_display = date("j/n/y", $wednesday_ts);
-$thursday_display = date("j/n/y", $thursday_ts);
-$friday_display = date("j/n/y", $friday_ts);
-$week = date("W", $monday_ts);
+$week_number = date('W', $week_dates['monday_ts']);
 $prev_week = $week_offset - 1;
 $next_week = $week_offset + 1;
+
+$current_day = getCurrentDayName();
+$current_time = getCurrentTimeHHmm();
+$is_current_week = isCurrentWeek($week_offset);
 
 require_once(__DIR__ . '/../../server/server.php');
 
 $rooster_data = [];
-
 $sql = "SELECT schedule_date, subject, teacher, room, begin_time, end_time
     FROM schedule
     WHERE klas = ? AND schedule_date BETWEEN ? AND ?
@@ -46,7 +71,7 @@ $sql = "SELECT schedule_date, subject, teacher, room, begin_time, end_time
 /** @var mysqli $conn */
 $conn = isset($conn) ? $conn : get_db_connection();
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("sss", $user_klas, $monday_sql_date, $friday_sql_date);
+$stmt->bind_param("sss", $user_klas, $days['monday']['sql_date'], $days['friday']['sql_date']);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -54,53 +79,38 @@ while ($row = $result->fetch_assoc()) {
     $rooster_data[$row['schedule_date']][] = $row;
 }
 $stmt->close();
-
-
-date_default_timezone_set('Europe/Rome');
-$current_day = strtolower(date('l'));
-$current_time = date('Hi');
 ?>
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="css/Rooster.css"/>
-    <script src="js/darkmode.js" defer></script>
-    <title>Rooster for <?php echo htmlspecialchars($user_klas); ?></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rooster - <?php echo htmlspecialchars($user_klas); ?></title>
+    <link rel="stylesheet" href="css/Rooster.css">
 </head>
 <body>
-<header class="navbar">
-        <span style="color: white; margin-left: 15px;">
-            Ingelogd als: <?php echo htmlspecialchars($_SESSION['username']); ?>
-            (Klas: <?php echo htmlspecialchars($user_klas); ?>)
-        </span>
-    <form action="../auth/php/logout.php" method="post"> <input type="hidden" name="csrf" value="<?php echo htmlspecialchars($csrf); ?>" /> <input type="submit" value="Logout" class="logout"/>
-    </form>
 
-    <div class="Darkmode">
-        <input id="Switch" type="button" value="Darkmode" />
-    </div>
-</header>
-
-<div class="Agenda" >
-
-    <div class="Maandag<?php if ($week_offset === 0 && $current_day === 'monday') echo ' today'; ?>">
-        <h4 class="DateMaandag"><?php echo $monday_display; ?><br>Maandag</h4>
-        <ul class="TasksMaandag">
-            <?php if (empty($rooster_data[$monday_sql_date])): ?>
-                <li class="schedule-item">Geen lessen</li>
-            <?php else: ?>
-                <?php foreach ($rooster_data[$monday_sql_date] as $item): ?>
-                    <?php
+<div class="Agenda">
+    <?php foreach ($days as $day_key => $day): ?>
+        <?php
+        $is_today = ($is_current_week && $current_day === $day_key);
+        $day_class = ucfirst($day['name']);
+        ?>
+        <div class="<?php echo $day_class; ?><?php if ($is_today) echo ' today'; ?>">
+            <h4 class="Date<?php echo $day_class; ?>"><?php echo htmlspecialchars($day['display']); ?><br><?php echo htmlspecialchars($day['name']); ?></h4>
+            <ul class="Tasks<?php echo $day_class; ?>">
+                <?php if (empty($rooster_data[$day['sql_date']])): ?>
+                    <li class="schedule-item">Geen lessen</li>
+                <?php else: ?>
+                    <?php foreach ($rooster_data[$day['sql_date']] as $item): ?>
+                        <?php
                         $bt_raw = $item['begin_time'];
                         $et_raw = $item['end_time'];
                         $bt = str_pad($bt_raw, 4, '0', STR_PAD_LEFT);
                         $et = str_pad($et_raw, 4, '0', STR_PAD_LEFT);
 
-                        $is_current = ($week_offset === 0 && $current_day === 'monday' && $current_time >= $bt && $current_time < $et);
-                    ?>
+                        $is_current = ($is_today && $current_time >= $bt && $current_time < $et);
+                        ?>
                     <li class="schedule-item<?php if ($is_current) echo ' current-lesson'; ?>">
                         <div class="subject"><?php echo htmlspecialchars($item['subject']); ?></div>
                         <div class="teacher"><?php echo htmlspecialchars($item['teacher']); ?></div>
@@ -108,173 +118,26 @@ $current_time = date('Hi');
                         <div class="time-range">
                             <span class="begin_time">
                                 <?php
-                                    echo htmlspecialchars(substr($bt, 0, 2) . ':' . substr($bt, 2));
+                                echo htmlspecialchars(substr($bt, 0, 2) . ':' . substr($bt, 2));
                                 ?>
                             </span>
                             <span class="end_time">
                                 <?php
-                                    echo htmlspecialchars(substr($et, 0, 2) . ':' . substr($et, 2));
+                                echo htmlspecialchars(substr($et, 0, 2) . ':' . substr($et, 2));
                                 ?>
                             </span>
                         </div>
                     </li>
                 <?php endforeach; ?>
-            <?php endif; ?>
-        </ul>
-    </div>
-
-    <div class="Dinsdag<?php if ($week_offset === 0 && $current_day === 'tuesday') echo ' today'; ?>">
-        <h4 class="DateDinsdag"><?php echo $tuesday_display; ?><br>Dinsdag</h4>
-        <ul class="TasksDinsdag">
-            <?php if (empty($rooster_data[$tuesday_sql_date])): ?>
-                <li class="schedule-item">Geen lessen</li>
-            <?php else: ?>
-                <?php foreach ($rooster_data[$tuesday_sql_date] as $item): ?>
-                    <?php
-                        $bt_raw = $item['begin_time'];
-                        $et_raw = $item['end_time'];
-                        $bt = str_pad($bt_raw, 4, '0', STR_PAD_LEFT);
-                        $et = str_pad($et_raw, 4, '0', STR_PAD_LEFT);
-
-                        $is_current = ($week_offset === 0 && $current_day === 'tuesday' && $current_time >= $bt && $current_time < $et);
-                    ?>
-                    <li class="schedule-item<?php if ($is_current) echo ' current-lesson'; ?>">
-                        <div class="subject"><?php echo htmlspecialchars($item['subject']); ?></div>
-                        <div class="teacher"><?php echo htmlspecialchars($item['teacher']); ?></div>
-                        <div class="room"><?php echo htmlspecialchars($item['room']); ?></div>
-                        <div class="time-range">
-                            <span class="begin_time">
-                                <?php
-                                    echo htmlspecialchars(substr($bt, 0, 2) . ':' . substr($bt, 2));
-                                ?>
-                            </span>
-                            <span class="end_time">
-                                <?php
-                                    echo htmlspecialchars(substr($et, 0, 2) . ':' . substr($et, 2));
-                                ?>
-                            </span>
-                        </div>
-                    </li>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </ul>
-    </div>
-
-    <div class="Woensdag<?php if ($week_offset === 0 && $current_day === 'wednesday') echo ' today'; ?>">
-        <h4 class="DateWoensdag"><?php echo $wednesday_display; ?><br>Woensdag</h4>
-        <ul class="TasksWoensdag">
-            <?php if (empty($rooster_data[$wednesday_sql_date])): ?>
-                <li class="schedule-item">Geen lessen</li>
-            <?php else: ?>
-                <?php foreach ($rooster_data[$wednesday_sql_date] as $item): ?>
-                    <?php
-                        $bt_raw = $item['begin_time'];
-                        $et_raw = $item['end_time'];
-                        $bt = str_pad($bt_raw, 4, '0', STR_PAD_LEFT);
-                        $et = str_pad($et_raw, 4, '0', STR_PAD_LEFT);
-
-                        $is_current = ($week_offset === 0 && $current_day === 'wednesday' && $current_time >= $bt && $current_time < $et);
-                    ?>
-                    <li class="schedule-item<?php if ($is_current) echo ' current-lesson'; ?>">
-                        <div class="subject"><?php echo htmlspecialchars($item['subject']); ?></div>
-                        <div class="teacher"><?php echo htmlspecialchars($item['teacher']); ?></div>
-                        <div class="room"><?php echo htmlspecialchars($item['room']); ?></div>
-                        <div class="time-range">
-                            <span class="begin_time">
-                                <?php
-                                    echo htmlspecialchars(substr($bt, 0, 2) . ':' . substr($bt, 2));
-                                ?>
-                            </span>
-                            <span class="end_time">
-                                <?php
-                                    echo htmlspecialchars(substr($et, 0, 2) . ':' . substr($et, 2));
-                                ?>
-                            </span>
-                        </div>
-                    </li>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </ul>
-    </div>
-
-    <div class="Donderdag<?php if ($week_offset === 0 && $current_day === 'thursday') echo ' today'; ?>">
-        <h4 class="DateDonderdag"><?php echo $thursday_display; ?><br>Donderdag</h4>
-        <ul class="TasksDonderdag">
-            <?php if (empty($rooster_data[$thursday_sql_date])): ?>
-                <li class="schedule-item">Geen lessen</li>
-            <?php else: ?>
-                <?php foreach ($rooster_data[$thursday_sql_date] as $item): ?>
-                    <?php
-                        $bt_raw = $item['begin_time'];
-                        $et_raw = $item['end_time'];
-                        $bt = str_pad($bt_raw, 4, '0', STR_PAD_LEFT);
-                        $et = str_pad($et_raw, 4, '0', STR_PAD_LEFT);
-
-                        $is_current = ($week_offset === 0 && $current_day === 'thursday' && $current_time >= $bt && $current_time < $et);
-                    ?>
-                    <li class="schedule-item<?php if ($is_current) echo ' current-lesson'; ?>">
-                        <div class="subject"><?php echo htmlspecialchars($item['subject']); ?></div>
-                        <div class="teacher"><?php echo htmlspecialchars($item['teacher']); ?></div>
-                        <div class="room"><?php echo htmlspecialchars($item['room']); ?></div>
-                        <div class="time-range">
-                            <span class="begin_time">
-                                <?php
-                                    echo htmlspecialchars(substr($bt, 0, 2) . ':' . substr($bt, 2));
-                                ?>
-                            </span>
-                            <span class="end_time">
-                                <?php
-                                    echo htmlspecialchars(substr($et, 0, 2) . ':' . substr($et, 2));
-                                ?>
-                            </span>
-                        </div>
-                    </li>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </ul>
-    </div>
-
-    <div class="Vrijdag<?php if ($week_offset === 0 && $current_day === 'friday') echo ' today'; ?>">
-        <h4 class="DateVrijdag"><?php echo $friday_display; ?><br>Vrijdag</h4>
-        <ul class="TasksVrijdag">
-            <?php if (empty($rooster_data[$friday_sql_date])): ?>
-                <li class="schedule-item">Geen lessen</li>
-            <?php else: ?>
-                <?php foreach ($rooster_data[$friday_sql_date] as $item): ?>
-                    <?php
-                        $bt_raw = $item['begin_time'];
-                        $et_raw = $item['end_time'];
-                        $bt = str_pad($bt_raw, 4, '0', STR_PAD_LEFT);
-                        $et = str_pad($et_raw, 4, '0', STR_PAD_LEFT);
-
-                        $is_current = ($week_offset === 0 && $current_day === 'friday' && $current_time >= $bt && $current_time < $et);
-                    ?>
-                    <li class="schedule-item<?php if ($is_current) echo ' current-lesson'; ?>">
-                        <div class="subject"><?php echo htmlspecialchars($item['subject']); ?></div>
-                        <div class="teacher"><?php echo htmlspecialchars($item['teacher']); ?></div>
-                        <div class="room"><?php echo htmlspecialchars($item['room']); ?></div>
-                        <div class="time-range">
-                            <span class="begin_time">
-                                <?php
-                                    echo htmlspecialchars(substr($bt, 0, 2) . ':' . substr($bt, 2));
-                                ?>
-                            </span>
-                            <span class="end_time">
-                                <?php
-                                    echo htmlspecialchars(substr($et, 0, 2) . ':' . substr($et, 2));
-                                ?>
-                            </span>
-                        </div>
-                    </li>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </ul>
-    </div>
+                <?php endif; ?>
+            </ul>
+        </div>
+    <?php endforeach; ?>
 </div>
 
 <nav class="week-nav" aria-label="Week navigation">
     <a class="week-nav__btn" href="?week=<?php echo $prev_week; ?>" aria-label="Vorige week">‹</a>
-    <div class="week-nav__label">Week <?php echo htmlspecialchars($week); ?></div>
+    <div class="week-nav__label">Week <?php echo htmlspecialchars($week_number); ?></div>
     <a class="week-nav__btn" href="?week=<?php echo $next_week; ?>" aria-label="Volgende week">›</a>
     <a class="week-huidigeweek" href="?week=0">ga naar huidige week</a>
 </nav>
